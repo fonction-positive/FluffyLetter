@@ -1,0 +1,85 @@
+import { createRouter, createWebHistory } from 'vue-router';
+import { useUserStore } from '../stores/user';
+import Login from '../views/auth/Login.vue';
+import Register from '../views/auth/Register.vue';
+
+const routes = [
+    {
+        path: '/',
+        name: 'Home',
+        component: () => import('../views/product/ProductList.vue'),
+    },
+    {
+        path: '/product/:id',
+        name: 'ProductDetail',
+        component: () => import('../views/product/ProductDetail.vue'),
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: Login,
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: Register,
+    },
+    {
+        path: '/cart',
+        name: 'Cart',
+        component: () => import('../views/cart/Cart.vue'),
+    },
+    {
+        path: '/checkout',
+        name: 'Checkout',
+        component: () => import('../views/cart/Checkout.vue'),
+    },
+    {
+        path: '/user/orders',
+        name: 'OrderList',
+        component: () => import('../views/order/OrderList.vue'),
+    },
+    {
+        path: '/user/orders/:id',
+        name: 'OrderDetail',
+        component: () => import('../views/order/OrderDetail.vue'),
+    },
+    {
+        path: '/admin/dashboard',
+        name: 'AdminDashboard',
+        component: () => import('../views/admin/AdminDashboard.vue'),
+    },
+    {
+        path: '/admin/products',
+        name: 'AdminProductList',
+        component: () => import('../views/admin/AdminProductList.vue'),
+    },
+    {
+        path: '/admin/products/:id',
+        name: 'AdminProductEdit',
+        component: () => import('../views/admin/AdminProductEdit.vue'),
+    },
+    {
+        path: '/admin/orders',
+        name: 'AdminOrderList',
+        component: () => import('../views/admin/AdminOrderList.vue'),
+    },
+    {
+        path: '/admin/users',
+        name: 'AdminUsers',
+        component: () => import('../views/admin/AdminUsers.vue'),
+    },
+];
+
+const router = createRouter({
+    history: createWebHistory(),
+    routes,
+});
+
+router.beforeEach(async (to, from, next) => {
+    const userStore = useUserStore();
+    // Simple check, can be expanded
+    next();
+});
+
+export default router;
