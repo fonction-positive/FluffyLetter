@@ -4,8 +4,8 @@
       <div class="navbar-content">
         <!-- Logo -->
         <div class="logo" @click="$router.push('/')">
-          <div class="logo-icon">S</div>
-          <span class="logo-text">StoreWeb</span>
+          <div class="logo-icon">F</div>
+          <span class="logo-text">FluffyLetter</span>
         </div>
 
         <!-- 搜索框 - 桌面端 -->

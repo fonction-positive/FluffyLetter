@@ -100,17 +100,17 @@ class RegisterView(APIView):
         
         # 发送邮件
         try:
-            subject = 'StoreWeb 注册验证码'
+            subject = 'FluffyLetter 注册验证码'
             message = f'''您好，
 
-您正在注册 StoreWeb 账户，验证码是：{code}
+您正在注册 FluffyLetter 账户，验证码是：{code}
 
 验证码有效期为5分钟，请尽快使用。
 
 如果这不是您本人的操作，请忽略此邮件。
 
 ---
-StoreWeb 团队'''
+FluffyLetter 团队'''
             
             send_mail(
                 subject=subject,
@@ -253,7 +253,7 @@ class SendEmailCodeView(APIView):
         
         # 发送邮件
         try:
-            subject = 'StoreWeb 登录验证码'
+            subject = 'FluffyLetter 登录验证码'
             message = f'''您好，
 
 您的登录验证码是：{code}
@@ -263,7 +263,7 @@ class SendEmailCodeView(APIView):
 如果这不是您本人的操作，请忽略此邮件。
 
 ---
-StoreWeb 团队'''
+FluffyLetter 团队'''
             
             send_mail(
                 subject=subject,
@@ -365,7 +365,7 @@ class SendResetPasswordCodeView(APIView):
         
         # 发送邮件
         try:
-            subject = 'StoreWeb 重置密码验证码'
+            subject = 'FluffyLetter 重置密码验证码'
             message = f'''您好 {user.username}，
 
 您正在进行重置密码操作，验证码是：{code}
@@ -375,7 +375,7 @@ class SendResetPasswordCodeView(APIView):
 如果这不是您本人的操作，请立即修改密码并联系客服。
 
 ---
-StoreWeb 团队'''
+FluffyLetter 团队'''
             
             send_mail(
                 subject,

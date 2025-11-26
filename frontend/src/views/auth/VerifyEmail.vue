@@ -3,7 +3,7 @@
     <div class="verify-card">
       <!-- Logo -->
       <div class="logo-container">
-        <div class="logo">S</div>
+        <div class="logo">F</div>
       </div>
 
       <!-- Title -->
