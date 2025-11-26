@@ -2,7 +2,13 @@
   <div class="admin-users-page">
     <!-- Header -->
     <header class="admin-header">
-      <h1 class="page-title">用户管理</h1>
+      <div class="title-row">
+        <el-button text @click="$router.back()" class="back-button">
+          <el-icon><ArrowLeft /></el-icon>
+          返回
+        </el-button>
+        <h1 class="page-title">用户管理</h1>
+      </div>
     </header>
 
     <!-- Users Table -->
@@ -52,6 +58,7 @@
 import { ref, onMounted } from 'vue';
 import api from '../../api/axios';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { ArrowLeft } from '@element-plus/icons-vue';
 
 const users = ref([]);
 const loading = ref(false);
@@ -115,11 +122,24 @@ const handleToggleBan = (user) => {
   box-shadow: var(--shadow-sm);
 }
 
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
 .page-title {
   font-size: 32px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--color-text-primary);
+  margin: 0;
+}
+
+.back-button {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-primary);
 }
 
 .table-container {

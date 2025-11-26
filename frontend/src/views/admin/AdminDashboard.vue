@@ -2,7 +2,13 @@
   <div class="admin-dashboard">
     <!-- Header -->
     <header class="admin-header">
-      <h1 class="page-title">数据统计</h1>
+      <div class="title-row">
+        <el-button text @click="$router.back()" class="back-button">
+          <el-icon><ArrowLeft /></el-icon>
+          返回
+        </el-button>
+        <h1 class="page-title">数据统计</h1>
+      </div>
     </header>
 
     <!-- Stats Cards -->
@@ -78,7 +84,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import api from '../../api/axios';
-import { Money, Document, User, Clock } from '@element-plus/icons-vue';
+import { Money, Document, User, Clock, ArrowLeft } from '@element-plus/icons-vue';
 
 const stats = ref({});
 const loading = ref(false);
@@ -127,11 +133,24 @@ const getStatusType = (status) => {
   box-shadow: var(--shadow-sm);
 }
 
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
 .page-title {
   font-size: 32px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--color-text-primary);
+  margin: 0;
+}
+
+.back-button {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-primary);
 }
 
 .stats-grid {

@@ -3,7 +3,13 @@
     <!-- Header -->
     <header class="admin-header">
       <div class="header-content">
-        <h1 class="page-title">商品管理</h1>
+        <div class="title-row">
+          <el-button text @click="$router.back()" class="back-button">
+            <el-icon><ArrowLeft /></el-icon>
+            返回
+          </el-button>
+          <h1 class="page-title">商品管理</h1>
+        </div>
         <el-button type="primary" @click="$router.push('/admin/products/new')" size="large">
           <el-icon><Plus /></el-icon>
           添加商品
@@ -85,7 +91,7 @@
 import { onMounted } from 'vue';
 import { useProductStore } from '../../stores/product';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Plus, Picture } from '@element-plus/icons-vue';
+import { Plus, Picture, ArrowLeft } from '@element-plus/icons-vue';
 
 const productStore = useProductStore();
 
@@ -137,11 +143,24 @@ const handleDelete = (product) => {
   align-items: center;
 }
 
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
 .page-title {
   font-size: 32px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--color-text-primary);
+  margin: 0;
+}
+
+.back-button {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-primary);
 }
 
 .table-container {
