@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useUserStore } from '../stores/user';
 import Login from '../views/auth/Login.vue';
 import Register from '../views/auth/Register.vue';
+import VerifyEmail from '../views/auth/VerifyEmail.vue';
 
 const routes = [
     {
@@ -28,6 +29,11 @@ const routes = [
         path: '/register',
         name: 'Register',
         component: Register,
+    },
+    {
+        path: '/verify-email',
+        name: 'VerifyEmail',
+        component: VerifyEmail,
     },
     {
         path: '/cart',

@@ -198,9 +198,20 @@ const handleRegister = async () => {
   loading.value = true;
   try {
     const { confirmPassword, ...registerData } = form.value;
+    
+    // 发送验证码
     await userStore.register(registerData);
-    ElMessage.success('注册成功！请登录');
-    router.push('/login');
+    
+    // 保存注册数据到本地存储（用于重新发送验证码）
+    localStorage.setItem('registerData', JSON.stringify(registerData));
+    
+    ElMessage.success('验证码已发送到您的邮箱');
+    
+    // 跳转到验证页面
+    router.push({
+      path: '/verify-email',
+      query: { email: registerData.email }
+    });
   } catch (error) {
     const errorMsg = error.response?.data?.detail || error.response?.data?.message || '注册失败，请重试';
     ElMessage.error(errorMsg);
