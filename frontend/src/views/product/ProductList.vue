@@ -6,8 +6,10 @@
     <!-- Main Content -->
     <main class="main-content">
       <div class="container">
-
-
+        <!-- Search Results Header -->
+        <div v-if="searchQuery" class="search-header">
+          <p class="search-count">找到 {{ filteredProducts.length }} 个商品</p>
+        </div>
 
         <!-- Category Tabs -->
         <div class="category-tabs">
@@ -67,14 +69,16 @@
 
 <script setup>
 import NavBar from '../../components/NavBar.vue';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useProductStore } from '../../stores/product';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { Picture } from '@element-plus/icons-vue';
 
 const productStore = useProductStore();
 const router = useRouter();
+const route = useRoute();
 const activeCategory = ref('all');
+const searchQuery = ref('');
 
 // Get unique categories from products
 const categories = computed(() => {
@@ -90,15 +94,33 @@ const categories = computed(() => {
   return Array.from(categoryMap.values());
 });
 
-// Filter products by category
+// Filter products by category and search query
 const filteredProducts = computed(() => {
-  if (activeCategory.value === 'all') {
-    return productStore.products;
+  let products = productStore.products;
+  
+  // Filter by category
+  if (activeCategory.value !== 'all') {
+    products = products.filter(
+      product => product.category.toString() === activeCategory.value
+    );
   }
-  return productStore.products.filter(
-    product => product.category.toString() === activeCategory.value
-  );
+  
+  // Filter by search query
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    products = products.filter(product => 
+      product.name.toLowerCase().includes(query) ||
+      (product.description && product.description.toLowerCase().includes(query)) ||
+      (product.category_name && product.category_name.toLowerCase().includes(query))
+    );
+  }
+  
+  return products;
 });
+
+const handleCategoryChange = (categoryId) => {
+  activeCategory.value = categoryId;
+};
 
 const goToDetail = (id) => {
   router.push(`/product/${id}`);
@@ -106,6 +128,16 @@ const goToDetail = (id) => {
 
 onMounted(() => {
   productStore.fetchProducts();
+  
+  // Get search query from URL
+  if (route.query.search) {
+    searchQuery.value = route.query.search;
+  }
+});
+
+// Watch for route query changes
+watch(() => route.query.search, (newSearch) => {
+  searchQuery.value = newSearch || '';
 });
 </script>
 
@@ -119,6 +151,25 @@ onMounted(() => {
 .main-content {
   padding-top: calc(6rem + var(--spacing-xl));
   padding-bottom: var(--spacing-2xl);
+}
+
+.search-header {
+  margin-bottom: var(--spacing-xl);
+}
+
+.page-title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-color);
+}
+
+.search-count {
+  font-size: 1rem;
+  color: var(--secondary-color);
+  margin: 0;
 }
 
 

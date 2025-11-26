@@ -1,99 +1,110 @@
 <template>
-  <nav class="navbar">
-    <div class="navbar-content">
-      <!-- Logo -->
-      <div class="logo" @click="$router.push('/')">
-        <div class="logo-icon">S</div>
-        <span class="logo-text">StoreWeb</span>
-      </div>
-
-      <!-- 搜索框 - 桌面端 -->
-      <div class="search-container desktop-search">
-        <el-input 
-          v-model="searchQuery" 
-          placeholder="搜索商品..." 
-          @input="handleSearch" 
-          clearable
-          size="large"
-          class="search-input"
-        >
-          <template #prefix>
-            <el-icon><Search /></el-icon>
-          </template>
-        </el-input>
-      </div>
-
-      <!-- 右侧操作区 -->
-      <div class="navbar-actions">
-        <!-- 搜索按钮 - 移动端 -->
-        <div class="icon-button mobile-search-btn" @click="showMobileSearch = true">
-          <el-icon :size="22"><Search /></el-icon>
+  <div>
+    <nav class="navbar">
+      <div class="navbar-content">
+        <!-- Logo -->
+        <div class="logo" @click="$router.push('/')">
+          <div class="logo-icon">S</div>
+          <span class="logo-text">StoreWeb</span>
         </div>
 
-        <!-- 购物车 -->
-        <el-badge :value="cartStore.totalCount" :hidden="cartStore.totalCount === 0" class="cart-badge">
-          <div class="icon-button" @click="$router.push('/cart')">
-            <el-icon :size="22"><ShoppingCart /></el-icon>
-          </div>
-        </el-badge>
+        <!-- 搜索框 - 桌面端 -->
+        <div class="search-container desktop-search">
+          <el-input 
+            v-model="searchQuery" 
+            placeholder="搜索商品..." 
+            @keyup.enter="handleSearchClick"
+            clearable
+            size="large"
+            class="search-input"
+          >
+            <template #prefix>
+              <el-icon><Search /></el-icon>
+            </template>
+            <template #suffix>
+              <el-button 
+                :icon="Search" 
+                circle 
+                size="small"
+                @click="handleSearchClick"
+                class="search-btn"
+              />
+            </template>
+          </el-input>
+        </div>
 
-        <!-- 用户菜单 -->
-        <el-dropdown v-if="userStore.isAuthenticated" trigger="click" class="user-dropdown">
-          <div class="user-menu-trigger">
-            <el-icon :size="22"><User /></el-icon>
-            <span class="user-name">{{ userStore.user?.username }}</span>
-            <el-icon :size="14"><ArrowDown /></el-icon>
+        <!-- 右侧操作区 -->
+        <div class="navbar-actions">
+          <!-- 搜索按钮 - 移动端 -->
+          <div class="icon-button mobile-search-btn" @click="showMobileSearch = true">
+            <el-icon :size="22"><Search /></el-icon>
           </div>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item @click="$router.push('/user/orders')">
-                <el-icon><List /></el-icon>
-                我的订单
-              </el-dropdown-item>
-              <el-dropdown-item v-if="userStore.isAdmin" divided @click="$router.push('/admin/dashboard')">
-                <el-icon><DataAnalysis /></el-icon>
-                数据统计
-              </el-dropdown-item>
-              <el-dropdown-item v-if="userStore.isAdmin" @click="$router.push('/admin/products')">
-                <el-icon><Goods /></el-icon>
-                商品管理
-              </el-dropdown-item>
-              <el-dropdown-item v-if="userStore.isAdmin" @click="$router.push('/admin/orders')">
-                <el-icon><Document /></el-icon>
-                订单管理
-              </el-dropdown-item>
-              <el-dropdown-item v-if="userStore.isAdmin" @click="$router.push('/admin/users')">
-                <el-icon><User /></el-icon>
-                用户管理
-              </el-dropdown-item>
-              <el-dropdown-item divided @click="handleLogout">
-                <el-icon><SwitchButton /></el-icon>
-                退出登录
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-        <el-button v-else text @click="$router.push('/login')" class="login-button">登录</el-button>
 
-        <!-- 主题切换 -->
-        <div class="icon-button theme-toggle" @click="themeStore.toggleTheme">
-          <svg v-if="themeStore.isDark" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          <svg v-else width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
+          <!-- 购物车 -->
+          <el-badge :value="cartStore.totalCount" :hidden="cartStore.totalCount === 0" class="cart-badge">
+            <div class="icon-button" @click="$router.push('/cart')">
+              <el-icon :size="22"><ShoppingCart /></el-icon>
+            </div>
+          </el-badge>
+
+          <!-- 用户菜单 -->
+          <el-dropdown v-if="userStore.isAuthenticated" trigger="click" class="user-dropdown">
+            <div class="user-menu-trigger">
+              <el-icon :size="22"><User /></el-icon>
+              <span class="user-name">{{ userStore.user?.username }}</span>
+              <el-icon :size="14"><ArrowDown /></el-icon>
+            </div>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click="$router.push('/user/orders')">
+                  <el-icon><List /></el-icon>
+                  我的订单
+                </el-dropdown-item>
+                <el-dropdown-item v-if="userStore.isAdmin" divided @click="$router.push('/admin/dashboard')">
+                  <el-icon><DataAnalysis /></el-icon>
+                  数据统计
+                </el-dropdown-item>
+                <el-dropdown-item v-if="userStore.isAdmin" @click="$router.push('/admin/products')">
+                  <el-icon><Goods /></el-icon>
+                  商品管理
+                </el-dropdown-item>
+                <el-dropdown-item v-if="userStore.isAdmin" @click="$router.push('/admin/orders')">
+                  <el-icon><Document /></el-icon>
+                  订单管理
+                </el-dropdown-item>
+                <el-dropdown-item v-if="userStore.isAdmin" @click="$router.push('/admin/users')">
+                  <el-icon><User /></el-icon>
+                  用户管理
+                </el-dropdown-item>
+                <el-dropdown-item divided @click="handleLogout">
+                  <el-icon><SwitchButton /></el-icon>
+                  退出登录
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <el-button v-else text @click="$router.push('/login')" class="login-button">登录</el-button>
+
+          <!-- 主题切换 -->
+          <div class="icon-button theme-toggle" @click="themeStore.toggleTheme">
+            <svg v-if="themeStore.isDark" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg v-else width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </div>
         </div>
       </div>
-    </div>
+    </nav>
 
     <!-- 移动端搜索对话框 -->
     <el-dialog 
@@ -106,7 +117,7 @@
       <el-input 
         v-model="searchQuery" 
         placeholder="搜索商品..." 
-        @input="handleSearch" 
+        @keyup.enter="handleSearchClick"
         clearable
         size="large"
         autofocus
@@ -115,18 +126,27 @@
         <template #prefix>
           <el-icon><Search /></el-icon>
         </template>
+        <template #suffix>
+          <el-button 
+            :icon="Search" 
+            circle 
+            size="small"
+            @click="handleSearchClick"
+            class="search-btn"
+          />
+        </template>
       </el-input>
     </el-dialog>
-  </nav>
+  </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useProductStore } from '../stores/product';
 import { useUserStore } from '../stores/user';
 import { useCartStore } from '../stores/cart';
 import { useThemeStore } from '../stores/theme';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { 
   Search, 
   ShoppingCart, 
@@ -144,18 +164,35 @@ const userStore = useUserStore();
 const cartStore = useCartStore();
 const themeStore = useThemeStore();
 const router = useRouter();
+const route = useRoute();
 const searchQuery = ref('');
 const showMobileSearch = ref(false);
 
+// Initialize search query from URL on mount
+onMounted(() => {
+  if (route.query.search) {
+    searchQuery.value = route.query.search;
+  }
+});
 
-const handleSearch = () => {
-  if (window.searchTimeout) clearTimeout(window.searchTimeout);
-  window.searchTimeout = setTimeout(() => {
-    productStore.fetchProducts({ search: searchQuery.value });
-    if (router.currentRoute.value.path !== '/') {
-      router.push('/');
-    }
-  }, 500);
+// Watch route changes to sync search query
+watch(() => route.query.search, (newSearch) => {
+  searchQuery.value = newSearch || '';
+});
+
+const handleSearchClick = () => {
+  if (!searchQuery.value.trim()) {
+    return;
+  }
+  
+  // 关闭移动端搜索对话框
+  showMobileSearch.value = false;
+  
+  // 跳转到 ProductList 页面并传递搜索参数
+  router.push({
+    path: '/products',
+    query: { search: searchQuery.value }
+  });
 };
 
 const handleLogout = () => {
@@ -255,6 +292,10 @@ const handleLogout = () => {
 
 .search-input :deep(.el-input__wrapper:hover) {
   border-color: var(--secondary-color);
+}
+
+.search-btn {
+  margin-right: var(--spacing-xs);
 }
 
 /* 导航栏操作区 */
