@@ -50,7 +50,14 @@
       <!-- 商品列表区域 -->
       <section class="products-section animate-slide-up">
         <div class="container">
+        <div class="section-header">
           <h2 class="section-title">精选商品</h2>
+          <el-button type="primary" @click="goToProducts" class="view-all-button">
+            View All
+            <el-icon class="ml-1"><ArrowRight /></el-icon>
+          </el-button>
+        </div>
+
           
           <div v-loading="productStore.loading" class="products-grid">
             <div 
@@ -95,7 +102,7 @@ import { useProductStore } from '../stores/product';
 import { useUserStore } from '../stores/user';
 import { useCartStore } from '../stores/cart';
 import { useRouter } from 'vue-router';
-import { Picture } from '@element-plus/icons-vue';
+import { Picture, ArrowRight } from '@element-plus/icons-vue';
 
 const productStore = useProductStore();
 const userStore = useUserStore();
@@ -112,7 +119,9 @@ onMounted(() => {
   }
 });
 
-
+const goToProducts = () => {
+  router.push('/products');
+};
 
 const goToDetail = (id) => {
   router.push(`/product/${id}`);
@@ -302,6 +311,24 @@ const goToDetail = (id) => {
 .products-section {
   padding: var(--spacing-2xl) 0;
 }
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.view-all-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.ml-1 {
+  margin-left: 0.25rem;
+}
+
 
 .products-grid {
   display: grid;
