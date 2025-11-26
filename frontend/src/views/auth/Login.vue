@@ -229,12 +229,9 @@ const handleLogin = async () => {
 
 .login-form :deep(.el-form-item) {
   margin-bottom: 16px;
-  animation: fade-in 0.6s ease both;
 }
 
-.login-form :deep(.el-form-item:nth-child(1)) {
-  animation-delay: 0.5s;
-}
+
 
 .login-form :deep(.el-form-item__label) {
   font-size: 14px;
@@ -292,7 +289,6 @@ const handleLogin = async () => {
   flex-direction: column;
   gap: 12px;
   margin-top: 8px;
-  animation: fade-in 0.6s ease 0.7s both;
   align-items: stretch;
 }
 
