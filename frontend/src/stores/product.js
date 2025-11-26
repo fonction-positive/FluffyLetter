@@ -40,6 +40,17 @@ export const useProductStore = defineStore('product', {
             }
         },
         // Admin actions
+        async fetchAllProducts() {
+            this.loading = true;
+            try {
+                const response = await api.get('admin/products/');
+                this.products = response.data;
+            } catch (error) {
+                console.error('Fetch all products failed:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
         async createProduct(data) {
             return api.post('admin/products/', data);
         },

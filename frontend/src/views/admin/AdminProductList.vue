@@ -96,7 +96,7 @@ import { Plus, Picture, ArrowLeft } from '@element-plus/icons-vue';
 const productStore = useProductStore();
 
 onMounted(() => {
-  productStore.fetchProducts();
+  productStore.fetchAllProducts();
 });
 
 const handleDelete = (product) => {
@@ -113,7 +113,7 @@ const handleDelete = (product) => {
       try {
         await productStore.deleteProduct(product.id);
         ElMessage.success('删除成功');
-        productStore.fetchProducts();
+        productStore.fetchAllProducts();
       } catch (error) {
         ElMessage.error('删除失败');
       }
