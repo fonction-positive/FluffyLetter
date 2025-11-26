@@ -3,11 +3,13 @@
     <!-- Header -->
     <header class="header">
       <div class="header-content">
-        <el-button text @click="$router.back()" class="back-button">
-          <el-icon><ArrowLeft /></el-icon>
-          返回
-        </el-button>
-        <h1 class="page-title">购物车</h1>
+        <div class="title-row">
+          <el-button text @click="$router.back()" class="back-button">
+            <el-icon><ArrowLeft /></el-icon>
+            返回
+          </el-button>
+          <h1 class="page-title">购物车</h1>
+        </div>
       </div>
     </header>
 
@@ -22,8 +24,9 @@
             <div class="item-image">
               <img 
                 v-if="item.product_detail.main_image" 
-                :src="item.product_detail.main_image.image" 
-                :alt="item.product_detail.name"
+                :src="`http://localhost:8000/${item.product_detail.main_image.image}`" 
+                :alt="item.product_detail.name" 
+                class="product-image" 
               />
               <div v-else class="image-placeholder">
                 <el-icon><Picture /></el-icon>
@@ -32,7 +35,6 @@
 
             <div class="item-info">
               <h3 class="item-name">{{ item.product_detail.name }}</h3>
-              <p class="item-price">¥{{ item.product_detail.price }}</p>
             </div>
 
             <div class="item-quantity">
@@ -80,7 +82,7 @@
               size="large" 
               @click="handleCheckout"
               :disabled="selectedCount === 0"
-              class="checkout-btn"
+              :class="['checkout-btn', { 'is-disabled': selectedCount === 0 }]"
             >
               去结算
             </el-button>
@@ -100,11 +102,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useCartStore } from '../../stores/cart';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { ArrowLeft, Picture } from '@element-plus/icons-vue';
+import api from '../../api/axios';
 
 const cartStore = useCartStore();
 const router = useRouter();
@@ -116,6 +119,15 @@ onMounted(() => {
     item.selected = true;
   });
 });
+
+// 监听 cartStore.items 的变化，确保每个商品都有 selected 标记
+watch(() => cartStore.items, (newItems) => {
+  newItems.forEach(item => {
+    if (item.selected === undefined) {
+      item.selected = true;
+    }
+  });
+}, { immediate: true });
 
 const selectedCount = computed(() => {
   return cartStore.items.filter(item => item.selected).reduce((sum, item) => sum + item.quantity, 0);
@@ -181,10 +193,16 @@ const handleCheckout = () => {
 .header-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: var(--spacing-md) var(--spacing-xl);
+  padding: var(--spacing-xl);
   display: flex;
   align-items: center;
   gap: var(--spacing-lg);
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
 }
 
 .back-button {
@@ -194,10 +212,11 @@ const handleCheckout = () => {
 }
 
 .page-title {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--color-text-primary);
+  margin: 0;
 }
 
 .cart-container {
@@ -220,13 +239,20 @@ const handleCheckout = () => {
 
 .cart-item {
   background: var(--color-bg-primary);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   display: grid;
   grid-template-columns: auto 100px 1fr auto auto auto;
   gap: var(--spacing-lg);
   align-items: center;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.cart-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  border-color: var(--color-primary);
 }
 
 .item-image {
@@ -238,12 +264,14 @@ const handleCheckout = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .item-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .image-placeholder {
@@ -295,9 +323,10 @@ const handleCheckout = () => {
 
 .summary-card {
   background: var(--color-bg-primary);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--spacing-xl);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .summary-title {
@@ -333,6 +362,14 @@ const handleCheckout = () => {
   margin-top: var(--spacing-xl);
   font-size: 17px;
   font-weight: 600;
+}
+
+.checkout-btn.is-disabled {
+  background-color: var(--color-bg-secondary) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text-secondary) !important;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 @media (max-width: 1024px) {

@@ -188,10 +188,16 @@ const handleConfirm = async (orderId) => {
 .header-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: var(--spacing-md) var(--spacing-xl);
+  padding: var(--spacing-xl);
   display: flex;
   align-items: center;
   gap: var(--spacing-lg);
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
 }
 
 .back-button {
@@ -201,10 +207,11 @@ const handleConfirm = async (orderId) => {
 }
 
 .page-title {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--color-text-primary);
+  margin: 0;
 }
 
 .tabs-container {
