@@ -1,28 +1,722 @@
 <template>
-  <div class="home">
-    <h1>Welcome to StoreWeb</h1>
-    <p v-if="userStore.isAuthenticated">Hello, {{ userStore.user?.username }}</p>
-    <el-button v-if="!userStore.isAuthenticated" @click="$router.push('/login')">Login</el-button>
-    <el-button v-else @click="handleLogout">Logout</el-button>
+  <div class="home-page">
+    <!-- 固定悬浮导航栏 -->
+    <nav class="navbar">
+      <div class="navbar-content">
+        <!-- Logo -->
+        <div class="logo" @click="$router.push('/')">
+          <div class="logo-icon">S</div>
+          <span class="logo-text">StoreWeb</span>
+        </div>
+
+        <!-- 搜索框 -->
+        <div class="search-container">
+          <el-input 
+            v-model="searchQuery" 
+            placeholder="搜索商品..." 
+            @input="handleSearch" 
+            clearable
+            size="large"
+            class="search-input"
+          >
+            <template #prefix>
+              <el-icon><Search /></el-icon>
+            </template>
+          </el-input>
+        </div>
+
+        <!-- 右侧操作区 -->
+        <div class="navbar-actions">
+          <!-- 购物车 -->
+          <el-badge :value="cartStore.totalCount" :hidden="cartStore.totalCount === 0" class="cart-badge">
+            <div class="icon-button" @click="$router.push('/cart')">
+              <el-icon :size="22"><ShoppingCart /></el-icon>
+            </div>
+          </el-badge>
+
+          <!-- 用户菜单 -->
+          <el-dropdown v-if="userStore.isAuthenticated" trigger="click" class="user-dropdown">
+            <div class="user-menu-trigger">
+              <el-icon :size="22"><User /></el-icon>
+              <span class="user-name">{{ userStore.user?.username }}</span>
+              <el-icon :size="14"><ArrowDown /></el-icon>
+            </div>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click="$router.push('/user/orders')">
+                  <el-icon><List /></el-icon>
+                  我的订单
+                </el-dropdown-item>
+                <el-dropdown-item v-if="userStore.isAdmin" divided @click="$router.push('/admin/dashboard')">
+                  <el-icon><DataAnalysis /></el-icon>
+                  数据统计
+                </el-dropdown-item>
+                <el-dropdown-item v-if="userStore.isAdmin" @click="$router.push('/admin/products')">
+                  <el-icon><Goods /></el-icon>
+                  商品管理
+                </el-dropdown-item>
+                <el-dropdown-item v-if="userStore.isAdmin" @click="$router.push('/admin/orders')">
+                  <el-icon><Document /></el-icon>
+                  订单管理
+                </el-dropdown-item>
+                <el-dropdown-item v-if="userStore.isAdmin" @click="$router.push('/admin/users')">
+                  <el-icon><User /></el-icon>
+                  用户管理
+                </el-dropdown-item>
+                <el-dropdown-item divided @click="handleLogout">
+                  <el-icon><SwitchButton /></el-icon>
+                  退出登录
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <el-button v-else text @click="$router.push('/login')" class="login-button">登录</el-button>
+
+          <!-- 主题切换 -->
+          <div class="icon-button theme-toggle" @click="themeStore.toggleTheme">
+            <svg v-if="themeStore.isDark" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg v-else width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 品牌故事区域（Hero Section） -->
+      <section class="hero-section animate-fade-in">
+        <div class="hero-container">
+          <div class="hero-image-wrapper">
+            <div class="hero-image-container">
+              <img 
+                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop" 
+                alt="Eunice的工作室"
+                class="hero-image"
+              />
+            </div>
+          </div>
+          <div class="hero-content">
+            <h1 class="hero-title">Eunice的工作室</h1>
+            <p class="hero-description">
+              欢迎来到Eunice的工作室，专注于手机链及配件设计与定制。每一件作品都是精心打造，让您的手机成为独特的时尚配饰。
+            </p>
+            <div class="hero-social">
+              <button class="follow-button">Follow us</button>
+              <div class="social-icons">
+                <a href="#" class="social-icon" aria-label="Instagram">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  </svg>
+                </a>
+                <a href="#" class="social-icon" aria-label="Facebook">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                </a>
+                <a href="#" class="social-icon" aria-label="LinkedIn">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 商品列表区域 -->
+      <section class="products-section animate-slide-up">
+        <div class="container">
+          <h2 class="section-title">精选商品</h2>
+          
+          <div v-loading="productStore.loading" class="products-grid">
+            <div 
+              v-for="product in productStore.products" 
+              :key="product.id" 
+              class="product-card"
+              @click="goToDetail(product.id)"
+            >
+              <div class="product-image-wrapper">
+                <img 
+                  v-if="product.main_image" 
+                  :src="product.main_image.image" 
+                  :alt="product.name"
+                  class="product-image" 
+                />
+                <div v-else class="product-image-placeholder">
+                  <el-icon :size="48"><Picture /></el-icon>
+                </div>
+              </div>
+              <div class="product-info">
+                <h3 class="product-name">{{ product.name }}</h3>
+                <p class="product-price">¥{{ product.price }}</p>
+              </div>
+            </div>
+          </div>
+
+          <el-empty 
+            v-if="!productStore.loading && productStore.products.length === 0" 
+            description="暂无商品"
+            :image-size="120"
+          />
+        </div>
+      </section>
+    </main>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
+import { useProductStore } from '../stores/product';
 import { useUserStore } from '../stores/user';
+import { useCartStore } from '../stores/cart';
+import { useThemeStore } from '../stores/theme';
 import { useRouter } from 'vue-router';
+import { 
+  Search, 
+  Picture, 
+  ShoppingCart, 
+  User, 
+  ArrowDown, 
+  List, 
+  SwitchButton, 
+  DataAnalysis, 
+  Goods, 
+  Document
+} from '@element-plus/icons-vue';
 
+const productStore = useProductStore();
 const userStore = useUserStore();
+const cartStore = useCartStore();
+const themeStore = useThemeStore();
 const router = useRouter();
+const searchQuery = ref('');
+
+onMounted(() => {
+  productStore.fetchProducts();
+  if (userStore.isAuthenticated) {
+    if (!userStore.user) {
+      userStore.fetchUser();
+    }
+    cartStore.fetchCart();
+  }
+});
+
+const handleSearch = () => {
+  if (window.searchTimeout) clearTimeout(window.searchTimeout);
+  window.searchTimeout = setTimeout(() => {
+    productStore.fetchProducts({ search: searchQuery.value });
+  }, 500);
+};
+
+const goToDetail = (id) => {
+  router.push(`/product/${id}`);
+};
 
 const handleLogout = () => {
   userStore.logout();
-  router.push('/login');
+  router.push('/');
 };
 </script>
 
 <style scoped>
-.home {
-  text-align: center;
-  margin-top: 50px;
+.home-page {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  transition: background-color 0.3s ease;
+}
+
+/* 固定悬浮导航栏 */
+.navbar {
+  position: fixed;
+  top: var(--spacing-md);
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - var(--spacing-xl) * 2);
+  max-width: 1400px;
+  z-index: 1000;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 2.5rem;
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(20px);
+  transition: var(--transition);
+}
+
+.navbar-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-md) var(--spacing-xl);
+  position: relative;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.logo:hover {
+  opacity: 0.8;
+}
+
+.logo-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-full);
+  background-color: hsl(0, 0%, 18%);
+  color: hsl(36, 44%, 96%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  transition: var(--transition);
+}
+
+.dark .logo-icon {
+  background-color: hsl(36, 44%, 96%);
+  color: hsl(0, 0%, 18%);
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+/* 搜索框 */
+.search-container {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 600px;
+  z-index: 1;
+}
+
+.search-input {
+  --el-input-border-radius: var(--radius-base);
+  --el-input-bg-color: var(--muted-color);
+  --el-input-border-color: var(--border-color);
+}
+
+.search-input :deep(.el-input__wrapper) {
+  background-color: var(--muted-color);
+  border-color: var(--border-color);
+}
+
+.search-input :deep(.el-input__wrapper:hover) {
+  border-color: var(--secondary-color);
+}
+
+/* 导航栏操作区 */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  margin-left: auto;
+}
+
+.icon-button {
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background-color: transparent;
+  border: none;
+  color: var(--text-color);
+  transition: var(--transition);
+  padding: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-button:hover {
+  opacity: 0.7;
+  transform: scale(1.1);
+}
+
+.user-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  padding: 0;
+  border-radius: 0;
+  transition: var(--transition);
+  color: var(--text-color);
+}
+
+.user-menu-trigger:hover {
+  opacity: 0.7;
+}
+
+.user-name {
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.login-button {
+  color: var(--text-color);
+}
+
+.theme-toggle {
+  margin-left: 0;
+}
+
+/* 主内容区 */
+.main-content {
+  padding-top: calc(6rem + var(--spacing-xl));
+  padding-bottom: var(--spacing-2xl);
+}
+
+/* Hero Section - 品牌故事区域 */
+.hero-section {
+  margin-bottom: var(--spacing-2xl);
+  padding: 0 var(--spacing-xl);
+}
+
+.hero-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: hsl(33, 35%, 92%);
+  border-radius: 3.5rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-2xl);
+  min-height: 400px;
+  padding: var(--spacing-2xl);
+  align-items: center;
+}
+
+.dark .hero-container {
+  background-color: hsl(0, 0%, 12%);
+}
+
+.hero-image-wrapper {
+  width: 100%;
+  height: 100%;
+  min-height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.hero-image-container {
+  width: 100%;
+  height: 100%;
+  min-height: 350px;
+  max-height: 400px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background-color: hsl(33, 30%, 85%);
+  box-shadow: 0 4px 20px -4px hsl(0 0% 0% / 0.15);
+  transition: var(--transition);
+  position: relative;
+}
+
+.dark .hero-image-container {
+  background-color: hsl(0, 0%, 18%);
+}
+
+.hero-image-container:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 30px -6px hsl(0 0% 0% / 0.2);
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.hero-image-container:hover .hero-image {
+  transform: scale(1.05);
+  animation: none;
+}
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.hero-content {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--spacing-lg);
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--text-color);
+  line-height: 1.2;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-title {
+    font-size: 3.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-title {
+    font-size: 4.5rem;
+  }
+}
+
+.hero-description {
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: var(--text-color);
+  opacity: 0.8;
+  margin: 0;
+}
+
+@media (min-width: 1024px) {
+  .hero-description {
+    font-size: 1.375rem;
+  }
+}
+
+.hero-social {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-md);
+}
+
+.follow-button {
+  padding: var(--spacing-md) var(--spacing-xl);
+  background-color: var(--primary-color);
+  color: var(--primary-text);
+  border: none;
+  border-radius: var(--radius-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 1rem;
+}
+
+.follow-button:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.social-icons {
+  display: flex;
+  gap: var(--spacing-lg);
+}
+
+.social-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-full);
+  background-color: var(--primary-color);
+  color: var(--primary-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.social-icon:hover {
+  transform: scale(1.1);
+  opacity: 0.9;
+}
+
+/* 商品列表区域 */
+.products-section {
+  padding: var(--spacing-2xl) 0;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+/* 商品卡片 */
+.product-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-base);
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-card);
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.product-image-wrapper {
+  width: 100%;
+  height: 260px;
+  overflow: hidden;
+  background-color: var(--muted-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05);
+}
+
+.product-image-placeholder {
+  color: var(--secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.product-info {
+  padding: var(--spacing-lg);
+}
+
+.product-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: var(--spacing-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: var(--spacing-xl);
+    gap: var(--spacing-xl);
+    border-radius: 3rem;
+    align-items: start;
+  }
+
+  .hero-image-wrapper {
+    min-height: 250px;
+    padding: 0;
+    align-items: flex-start;
+  }
+
+  .hero-image-container {
+    min-height: 250px;
+    max-height: 300px;
+    border-radius: 2rem;
+  }
+
+  .hero-content {
+    padding: 0;
+    justify-content: flex-start;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    width: calc(100% - var(--spacing-md) * 2);
+    top: var(--spacing-sm);
+    border-radius: 2rem;
+  }
+
+  .navbar-content {
+    flex-wrap: wrap;
+    padding: var(--spacing-sm) var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+
+  .search-container {
+    position: static;
+    transform: none;
+    left: auto;
+    order: 3;
+    width: 100%;
+    max-width: 100%;
+    margin-top: var(--spacing-sm);
+  }
+
+  .main-content {
+    padding-top: calc(7rem + var(--spacing-md));
+  }
+
+  .hero-section {
+    padding: 0 var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .hero-content {
+    padding: var(--spacing-lg);
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-description {
+    font-size: 1rem;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--spacing-md);
+  }
+
+  .products-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
 }
 </style>
