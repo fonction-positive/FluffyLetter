@@ -1,14 +1,14 @@
 :root {
   /* 亮色模式配色方案（HSL格式） */
-  --bg-color: hsl(36, 44%, 96%);
+  --bg-color: hsl(0, 0%, 100%);
   --text-color: hsl(0, 0%, 18%);
   --primary-color: hsl(0, 0%, 18%);
-  --primary-text: hsl(36, 44%, 96%);
+  --primary-text: hsl(0, 0%, 100%);
   --secondary-color: hsl(25, 30%, 70%);
-  --muted-color: hsl(33, 30%, 88%);
+  --muted-color: hsl(0, 0%, 96%);
   --accent-color: hsl(140, 20%, 50%);
-  --border-color: hsl(33, 25%, 85%);
-  --card-bg: hsl(33, 40%, 94%);
+  --border-color: hsl(0, 0%, 90%);
+  --card-bg: hsl(0, 0%, 98%);
   
   /* 圆角 */
   --radius-base: 1rem;

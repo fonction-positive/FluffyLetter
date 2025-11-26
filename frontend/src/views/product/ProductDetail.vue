@@ -1,15 +1,8 @@
 <template>
   <div class="product-detail-page" v-if="productStore.currentProduct">
     <!-- Header -->
-    <header class="header">
-      <div class="header-content">
-        <el-button text @click="$router.back()" class="back-button">
-          <el-icon><ArrowLeft /></el-icon>
-          返回
-        </el-button>
-        <div class="logo">StoreWeb</div>
-      </div>
-    </header>
+    <!-- Navigation Bar -->
+    <NavBar />
 
     <!-- Breadcrumb -->
     <div class="breadcrumb-container">
@@ -101,12 +94,13 @@
 </template>
 
 <script setup>
+import NavBar from '../../components/NavBar.vue';
 import { ref, onMounted, computed } from 'vue';
 import { useProductStore } from '../../stores/product';
 import { useCartStore } from '../../stores/cart';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import { ArrowLeft, Picture } from '@element-plus/icons-vue';
+import { Picture } from '@element-plus/icons-vue';
 
 const productStore = useProductStore();
 const cartStore = useCartStore();
@@ -139,40 +133,11 @@ const addToCart = async () => {
 .product-detail-page {
   min-height: 100vh;
   background-color: var(--color-bg-secondary);
+  padding-top: calc(6rem + var(--spacing-xl));
 }
 
 /* Header */
-.header {
-  background-color: var(--color-bg-primary);
-  border-bottom: 1px solid var(--color-border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(20px);
-  background-color: rgba(255, 255, 255, 0.8);
-}
 
-.header-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: var(--spacing-md) var(--spacing-xl);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-lg);
-}
-
-.back-button {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--color-primary);
-}
-
-.logo {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--color-text-primary);
-}
 
 /* Breadcrumb */
 .breadcrumb-container {
@@ -364,7 +329,6 @@ const addToCart = async () => {
 }
 
 @media (max-width: 768px) {
-  .header-content,
   .breadcrumb-container,
   .detail-container {
     padding-left: var(--spacing-md);
