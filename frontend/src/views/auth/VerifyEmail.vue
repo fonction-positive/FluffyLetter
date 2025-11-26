@@ -156,13 +156,16 @@ const handleVerify = async () => {
     
     // 更新用户store
     const userStore = useUserStore();
+    userStore.accessToken = response.data.access;
+    userStore.refreshToken = response.data.refresh;
     userStore.user = response.data.user;
-    userStore.isAuthenticated = true;
     
     // 清除注册数据
     localStorage.removeItem('registerData');
     
     ElMessage.success('注册成功！欢迎加入');
+    
+    // 跳转到首页
     router.push('/');
   } catch (error) {
     let errorMsg = '验证失败';

@@ -301,12 +301,16 @@ class EmailLoginView(APIView):
         except User.DoesNotExist:
             # 自动注册新用户
             username = email.split('@')[0]
-            # 确保用户名唯一
+            # 确保用户名唯一 - 如果重复则添加随机数字后缀
             base_username = username
-            counter = 1
-            while User.objects.filter(username=username).exists():
-                username = f"{base_username}{counter}"
-                counter += 1
+            if User.objects.filter(username=username).exists():
+                import random
+                random_suffix = random.randint(1000, 9999)
+                username = f"{base_username}_{random_suffix}"
+                # 如果还是重复，继续尝试
+                while User.objects.filter(username=username).exists():
+                    random_suffix = random.randint(1000, 9999)
+                    username = f"{base_username}_{random_suffix}"
             
             # 生成随机密码并创建用户
             import secrets

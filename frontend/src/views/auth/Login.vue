@@ -367,8 +367,9 @@ const handleEmailLogin = async () => {
     localStorage.setItem('refresh_token', response.data.refresh);
     
     // 更新用户store
+    userStore.accessToken = response.data.access;
+    userStore.refreshToken = response.data.refresh;
     userStore.user = response.data.user;
-    userStore.isAuthenticated = true;
     
     ElMessage.success('登录成功！欢迎');
     router.push('/');

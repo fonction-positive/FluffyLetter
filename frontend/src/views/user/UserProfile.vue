@@ -32,12 +32,13 @@
               </el-form-item>
 
               <el-form-item label="用户名">
-                <el-input v-model="profileForm.username" disabled />
-                <div class="form-tip">用户名不可修改</div>
+                <el-input v-model="profileForm.username" />
+                <div class="form-tip">用户名可用于登录，但需保持唯一</div>
               </el-form-item>
 
               <el-form-item label="邮箱">
-                <el-input v-model="profileForm.email" />
+                <el-input v-model="profileForm.email" disabled />
+                <div class="form-tip">邮箱是您的账号标识，不可修改</div>
               </el-form-item>
 
               <el-form-item>
@@ -244,6 +245,7 @@ const handleUpdateProfile = async () => {
   loading.value = true;
   try {
     const formData = new FormData();
+    formData.append('username', profileForm.username);
     formData.append('email', profileForm.email);
     if (avatarFile.value) {
       formData.append('avatar', avatarFile.value);
@@ -252,7 +254,12 @@ const handleUpdateProfile = async () => {
     await userStore.updateProfile(formData);
     ElMessage.success('个人信息更新成功');
   } catch (error) {
-    ElMessage.error('更新失败');
+    // 处理用户名重复错误
+    if (error.response?.data?.username) {
+      ElMessage.error(error.response.data.username[0] || '用户名已存在');
+    } else {
+      ElMessage.error(error.response?.data?.message || '更新失败');
+    }
   } finally {
     loading.value = false;
   }
