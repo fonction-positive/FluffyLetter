@@ -74,7 +74,16 @@
       "usernamePlaceholder": "Enter username (3-150 characters)",
       "emailPlaceholder": "Enter email address",
       "passwordPlaceholder": "Enter password (at least 6 characters)",
-      "confirmPasswordPlaceholder": "Enter password again"
+      "confirmPasswordPlaceholder": "Enter password again",
+      "usernameRequired": "Please enter username",
+      "usernameLength": "Username should be 3-20 characters",
+      "usernamePattern": "Username can only contain letters, numbers and underscores",
+      "emailRequired": "Please enter email address",
+      "emailFormat": "Please enter a valid email address",
+      "passwordRequired": "Please enter password",
+      "passwordMin": "Password must be at least 6 characters",
+      "confirmPasswordRequired": "Please enter password again",
+      "passwordMismatch": "Passwords do not match"
     },
     "verify": {
       "title": "Verify Email",
@@ -84,6 +93,18 @@
       "verify": "Verify & Register",
       "resend": "Resend Code",
       "countdown": "Resend in {count}s"
+    }
+  },
+  "home": {
+    "hero": {
+      "brandName": "Eunice's Studio",
+      "description": "Welcome to Eunice's Studio, specializing in phone chain and accessory design and customization. Each piece is carefully crafted to make your phone a unique fashion accessory.",
+      "followUs": "Follow Us"
+    },
+    "products": {
+      "title": "Featured Products",
+      "viewAll": "View All",
+      "empty": "No products available"
     }
   },
   "product": {
@@ -147,6 +168,7 @@
     "formValidationError": "Please fill in the form correctly",
     "codeSent": "Verification code sent to your email",
     "sendCodeError": "Failed to send verification code",
+    "registerError": "Registration failed, please try again",
     "operationSuccess": "Operation successful",
     "operationFailed": "Operation failed",
     "networkError": "Network error, please try again later",

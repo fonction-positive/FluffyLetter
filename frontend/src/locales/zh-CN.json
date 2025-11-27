@@ -74,7 +74,16 @@
       "usernamePlaceholder": "请输入用户名（3-150个字符）",
       "emailPlaceholder": "请输入邮箱地址",
       "passwordPlaceholder": "请输入密码（至少6位）",
-      "confirmPasswordPlaceholder": "请再次输入密码"
+      "confirmPasswordPlaceholder": "请再次输入密码",
+      "usernameRequired": "请输入用户名",
+      "usernameLength": "用户名长度应为3-20个字符",
+      "usernamePattern": "用户名只能包含字母、数字和下划线",
+      "emailRequired": "请输入邮箱地址",
+      "emailFormat": "请输入有效的邮箱地址",
+      "passwordRequired": "请输入密码",
+      "passwordMin": "密码至少6位",
+      "confirmPasswordRequired": "请再次输入密码",
+      "passwordMismatch": "两次输入的密码不一致"
     },
     "verify": {
       "title": "验证邮箱",
@@ -84,6 +93,18 @@
       "verify": "验证并注册",
       "resend": "重新发送验证码",
       "countdown": "秒后可重新发送"
+    }
+  },
+  "home": {
+    "hero": {
+      "brandName": "Eunice的工作室",
+      "description": "欢迎来到Eunice的工作室，专注于手机链及配件设计与定制。每一件作品都是精心打造，让您的手机成为独特的时尚配饰。",
+      "followUs": "关注我们"
+    },
+    "products": {
+      "title": "精选商品",
+      "viewAll": "查看全部",
+      "empty": "暂无商品"
     }
   },
   "product": {
@@ -147,6 +168,7 @@
     "formValidationError": "请正确填写表单信息",
     "codeSent": "验证码已发送到您的邮箱",
     "sendCodeError": "发送验证码失败",
+    "registerError": "注册失败，请重试",
     "operationSuccess": "操作成功",
     "operationFailed": "操作失败",
     "networkError": "网络错误，请稍后重试",

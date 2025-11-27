@@ -13,18 +13,18 @@
             <div class="hero-image-container">
               <img 
                 src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop" 
-                alt="Eunice的工作室"
+                :alt="$t('home.hero.brandName')"
                 class="hero-image"
               />
             </div>
           </div>
           <div class="hero-content">
-            <h1 class="hero-title">Eunice的工作室</h1>
+            <h1 class="hero-title">{{ $t('home.hero.brandName') }}</h1>
             <p class="hero-description">
-              欢迎来到Eunice的工作室，专注于手机链及配件设计与定制。每一件作品都是精心打造，让您的手机成为独特的时尚配饰。
+              {{ $t('home.hero.description') }}
             </p>
             <div class="hero-social">
-              <button class="follow-button">Follow us</button>
+              <button class="follow-button">{{ $t('home.hero.followUs') }}</button>
               <div class="social-icons">
                 <a href="#" class="social-icon" aria-label="Instagram">
                   <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
@@ -51,9 +51,9 @@
       <section class="products-section animate-slide-up">
         <div class="container">
         <div class="section-header">
-          <h2 class="section-title">精选商品</h2>
+          <h2 class="section-title">{{ $t('home.products.title') }}</h2>
           <el-button type="primary" @click="goToProducts" class="view-all-button">
-            View All
+            {{ $t('home.products.viewAll') }}
             <el-icon class="ml-1"><ArrowRight /></el-icon>
           </el-button>
         </div>
@@ -86,7 +86,7 @@
 
           <el-empty 
             v-if="!productStore.loading && productStore.products.length === 0" 
-            description="暂无商品"
+            :description="$t('home.products.empty')"
             :image-size="120"
           />
         </div>
@@ -102,12 +102,14 @@ import { useProductStore } from '../stores/product';
 import { useUserStore } from '../stores/user';
 import { useCartStore } from '../stores/cart';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { Picture, ArrowRight } from '@element-plus/icons-vue';
 
 const productStore = useProductStore();
 const userStore = useUserStore();
 const cartStore = useCartStore();
 const router = useRouter();
+const { t } = useI18n();
 
 onMounted(() => {
   productStore.fetchProducts();

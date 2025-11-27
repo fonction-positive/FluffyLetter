@@ -7,7 +7,7 @@
       </div>
 
       <!-- Title -->
-      <h1 class="title">创建账户</h1>
+      <h1 class="title">{{ $t('auth.register.title') }}</h1>
 
       <!-- Register Form -->
       <el-form 
@@ -22,7 +22,7 @@
         <el-form-item prop="username">
           <el-input 
             v-model="form.username" 
-            placeholder="请输入用户名（3-20个字符）"
+            :placeholder="$t('auth.register.usernamePlaceholder')"
             size="large"
             clearable
           >
@@ -37,7 +37,7 @@
           <el-input 
             v-model="form.email" 
             type="email"
-            placeholder="请输入邮箱地址"
+            :placeholder="$t('auth.register.emailPlaceholder')"
             size="large"
             clearable
           >
@@ -52,7 +52,7 @@
           <el-input 
             v-model="form.password" 
             :type="showPassword ? 'text' : 'password'"
-            placeholder="请输入密码（至少6位）"
+            :placeholder="$t('auth.register.passwordPlaceholder')"
             size="large"
             clearable
           >
@@ -76,7 +76,7 @@
           <el-input 
             v-model="form.confirmPassword" 
             :type="showConfirmPassword ? 'text' : 'password'"
-            placeholder="请再次输入密码"
+            :placeholder="$t('auth.register.confirmPasswordPlaceholder')"
             size="large"
             clearable
             @keyup.enter="handleRegister"
@@ -105,7 +105,7 @@
             :disabled="loading"
             class="register-button"
           >
-            {{ loading ? '注册中...' : '注册' }}
+            {{ loading ? $t('auth.register.registering') : $t('common.register') }}
           </el-button>
 
           <el-button 
@@ -113,7 +113,7 @@
             @click="$router.push('/login')"
             class="login-button"
           >
-            已有账户？去登录
+            {{ $t('auth.register.loginButton') }}
           </el-button>
         </div>
       </el-form>
@@ -122,14 +122,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import { User, Lock, Message, View, Hide } from '@element-plus/icons-vue';
 
 const userStore = useUserStore();
 const router = useRouter();
+const { t } = useI18n();
 
 const formRef = ref(null);
 const form = ref({
@@ -146,9 +148,9 @@ const showConfirmPassword = ref(false);
 const validateEmail = (rule, value, callback) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!value) {
-    callback(new Error('请输入邮箱地址'));
+    callback(new Error(t('auth.register.emailRequired')));
   } else if (!emailRegex.test(value)) {
-    callback(new Error('请输入有效的邮箱地址'));
+    callback(new Error(t('auth.register.emailFormat')));
   } else {
     callback();
   }
@@ -157,32 +159,32 @@ const validateEmail = (rule, value, callback) => {
 // 确认密码验证规则
 const validateConfirmPassword = (rule, value, callback) => {
   if (!value) {
-    callback(new Error('请再次输入密码'));
+    callback(new Error(t('auth.register.confirmPasswordRequired')));
   } else if (value !== form.value.password) {
-    callback(new Error('两次输入的密码不一致'));
+    callback(new Error(t('auth.register.passwordMismatch')));
   } else {
     callback();
   }
 };
 
 // 表单验证规则
-const rules = {
+const rules = computed(() => ({
   username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 20, message: '用户名长度应为3-20个字符', trigger: 'blur' },
-    { pattern: /^[a-zA-Z0-9_]+$/, message: '用户名只能包含字母、数字和下划线', trigger: 'blur' }
+    { required: true, message: t('auth.register.usernameRequired'), trigger: 'blur' },
+    { min: 3, max: 20, message: t('auth.register.usernameLength'), trigger: 'blur' },
+    { pattern: /^[a-zA-Z0-9_]+$/, message: t('auth.register.usernamePattern'), trigger: 'blur' }
   ],
   email: [
     { required: true, validator: validateEmail, trigger: 'blur' }
   ],
   password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, message: '密码至少6位', trigger: 'blur' }
+    { required: true, message: t('auth.register.passwordRequired'), trigger: 'blur' },
+    { min: 6, message: t('auth.register.passwordMin'), trigger: 'blur' }
   ],
   confirmPassword: [
     { required: true, validator: validateConfirmPassword, trigger: 'blur' }
   ]
-};
+}));
 
 const handleRegister = async () => {
   // 验证表单
@@ -191,7 +193,7 @@ const handleRegister = async () => {
   try {
     await formRef.value.validate();
   } catch (error) {
-    ElMessage.warning('请正确填写表单信息');
+    ElMessage.warning(t('messages.formValidationError'));
     return;
   }
 
@@ -205,7 +207,7 @@ const handleRegister = async () => {
     // 保存注册数据到本地存储（用于重新发送验证码）
     localStorage.setItem('registerData', JSON.stringify(registerData));
     
-    ElMessage.success('验证码已发送到您的邮箱');
+    ElMessage.success(t('messages.codeSent'));
     
     // 跳转到验证页面
     router.push({
@@ -213,7 +215,7 @@ const handleRegister = async () => {
       query: { email: registerData.email }
     });
   } catch (error) {
-    const errorMsg = error.response?.data?.detail || error.response?.data?.message || '注册失败，请重试';
+    const errorMsg = error.response?.data?.detail || error.response?.data?.message || t('messages.registerError');
     ElMessage.error(errorMsg);
   } finally {
     loading.value = false;
