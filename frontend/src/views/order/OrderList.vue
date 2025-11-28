@@ -306,9 +306,7 @@ const handleConfirm = async (orderId) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: var(--spacing-md);
   border-bottom: 1px solid var(--color-border);
-  margin-bottom: var(--spacing-md);
 }
 
 .order-info {
