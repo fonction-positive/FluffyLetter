@@ -24,14 +24,15 @@ const Profile = () => {
   const [user, setUser] = useState<UserData | null>(null);
   const [stats, setStats] = useState<Stats>({ orders: 0, favorites: 0, reviews: 0 });
   const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem('access_token');
 
-      // If not logged in, redirect to login
       if (!token) {
-        navigate('/login');
+        setIsLoggedIn(false);
+        setLoading(false);
         return;
       }
 
@@ -39,6 +40,7 @@ const Profile = () => {
         // Fetch user info
         const userResponse = await api.get('users/me/');
         setUser(userResponse.data);
+        setIsLoggedIn(true);
 
         // Fetch orders count
         try {
@@ -58,22 +60,24 @@ const Profile = () => {
 
       } catch (error) {
         console.error('Failed to fetch user data:', error);
-        // If token is invalid, redirect to login
+        // If token is invalid, clear it
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        navigate('/login');
+        setIsLoggedIn(false);
       } finally {
         setLoading(false);
       }
     };
 
     fetchUserData();
-  }, [navigate]);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    navigate('/login');
+    setUser(null);
+    setIsLoggedIn(false);
+    setStats({ orders: 0, favorites: 0, reviews: 0 });
   };
 
   const menuItems = [
@@ -91,10 +95,6 @@ const Profile = () => {
     );
   }
 
-  if (!user) {
-    return null;
-  }
-
   // Get user initials for avatar fallback
   const getInitials = (username: string) => {
     return username.substring(0, 2).toUpperCase();
@@ -105,46 +105,72 @@ const Profile = () => {
       {/* Header */}
       <h1 className="text-3xl font-bold mb-8">Profile</h1>
 
-      {/* User Info Card */}
-      <Card className="p-6 rounded-2xl mb-6">
-        <div className="flex items-center gap-4">
-          <Avatar className="h-20 w-20">
-            {user.avatar && <AvatarImage src={user.avatar} />}
-            <AvatarFallback className="text-xl font-bold">
-              {getInitials(user.username)}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <h2 className="text-xl font-bold">{user.username}</h2>
-            <p className="text-sm text-muted-foreground">{user.email}</p>
-            <Link to="/settings">
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-2 rounded-full text-xs font-semibold"
-              >
-                Edit Profile
-              </Button>
-            </Link>
+      {/* User Info Card - Different for logged in/out */}
+      {isLoggedIn && user ? (
+        <Card className="p-6 rounded-2xl mb-6">
+          <div className="flex items-center gap-4">
+            <Avatar className="h-20 w-20">
+              {user.avatar && <AvatarImage src={user.avatar} />}
+              <AvatarFallback className="text-xl font-bold">
+                {getInitials(user.username)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <h2 className="text-xl font-bold">{user.username}</h2>
+              <p className="text-sm text-muted-foreground">{user.email}</p>
+              <Link to="/settings">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-2 rounded-full text-xs font-semibold"
+                >
+                  Edit Profile
+                </Button>
+              </Link>
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      ) : (
+        <Card className="p-6 rounded-2xl mb-6">
+          <div className="flex items-center gap-4">
+            <Avatar className="h-20 w-20 bg-muted">
+              <AvatarFallback className="text-xl font-bold">
+                <User className="h-10 w-10 text-muted-foreground" />
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <h2 className="text-xl font-bold">未登录</h2>
+              <p className="text-sm text-muted-foreground mb-3">快来加入我们吧~</p>
+              <Link to="/login">
+                <Button
+                  size="sm"
+                  className="rounded-full text-xs font-semibold"
+                >
+                  注册登录
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </Card>
+      )}
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-4">
-        <Card className="p-4 rounded-2xl text-center">
-          <p className="text-2xl font-bold">{stats.orders}</p>
-          <p className="text-xs text-muted-foreground">Orders</p>
-        </Card>
-        <Card className="p-4 rounded-2xl text-center">
-          <p className="text-2xl font-bold">{stats.favorites}</p>
-          <p className="text-xs text-muted-foreground">Favorites</p>
-        </Card>
-        <Card className="p-4 rounded-2xl text-center">
-          <p className="text-2xl font-bold">{stats.reviews}</p>
-          <p className="text-xs text-muted-foreground">Reviews</p>
-        </Card>
-      </div>
+      {/* Stats - Only show if logged in */}
+      {isLoggedIn && (
+        <div className="grid grid-cols-3 gap-4 mb-4">
+          <Card className="p-4 rounded-2xl text-center">
+            <p className="text-2xl font-bold">{stats.orders}</p>
+            <p className="text-xs text-muted-foreground">Orders</p>
+          </Card>
+          <Card className="p-4 rounded-2xl text-center">
+            <p className="text-2xl font-bold">{stats.favorites}</p>
+            <p className="text-xs text-muted-foreground">Favorites</p>
+          </Card>
+          <Card className="p-4 rounded-2xl text-center">
+            <p className="text-2xl font-bold">{stats.reviews}</p>
+            <p className="text-xs text-muted-foreground">Reviews</p>
+          </Card>
+        </div>
+      )}
 
       {/* Menu Items */}
       <div className="space-y-6 mb-6">
@@ -153,7 +179,7 @@ const Profile = () => {
           const content = (
             <Card
               key={item.label}
-              className="p-4 rounded-2xl cursor-pointer hover:bg-muted/50 transition-colors"
+              className="p-4 my-3 rounded-2xl cursor-pointer hover:bg-muted/50 transition-colors"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -163,7 +189,7 @@ const Profile = () => {
                   <span className="font-semibold">{item.label}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {item.count !== undefined && item.count > 0 && (
+                  {isLoggedIn && item.count !== undefined && item.count > 0 && (
                     <span className="h-6 w-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-bold">
                       {item.count}
                     </span>
@@ -206,15 +232,17 @@ const Profile = () => {
         </div>
       </Card>
 
-      {/* Logout Button */}
-      <Button
-        variant="outline"
-        className="w-full h-12 rounded-full font-semibold"
-        onClick={handleLogout}
-      >
-        <LogOut className="h-4 w-4 mr-2" />
-        Log Out
-      </Button>
+      {/* Logout Button - Only show if logged in */}
+      {isLoggedIn && (
+        <Button
+          variant="outline"
+          className="w-full h-12 rounded-full font-semibold"
+          onClick={handleLogout}
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          Log Out
+        </Button>
+      )}
     </div>
   );
 };

@@ -59,7 +59,7 @@ const Settings = () => {
                 {section.items.map((item) => {
                   const Icon = item.icon;
                   const content = (
-                    <Card className="p-4 rounded-2xl cursor-pointer hover:bg-muted/50 transition-colors">
+                    <Card className="p-4 my-3 rounded-2xl cursor-pointer hover:bg-muted/50 transition-colors">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3 flex-1">
                           <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
