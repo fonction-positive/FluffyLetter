@@ -15,9 +15,9 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     permission_classes = [permissions.AllowAny] # Public read, Admin write handled below
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['category']
+    filterset_fields = ['category', 'category__name']
     search_fields = ['name', 'description']
-    ordering_fields = ['price', 'created_at']
+    ordering_fields = ['price', 'rating', 'created_at']
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
