@@ -1,7 +1,7 @@
 // 开发模式配置
 export const DEV_MODE = {
     // 设置为 true 启用开发模式（使用 mock 数据，跳过登录）
-    enabled: true,
+    enabled: false,
 
     // Mock 用户数据
     mockUser: {
