@@ -5,11 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import api from "@/lib/api";
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [isScrolled, setIsScrolled] = useState(false);
   const [favorites, setFavorites] = useState<number[]>([]);
+  const [user, setUser] = useState<{ username: string } | null>(null);
   const categories = ["All", "Women", "Man", "Kid"];
 
   useEffect(() => {
@@ -19,6 +21,22 @@ const Index = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Fetch user info
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          const response = await api.get('users/me/');
+          setUser(response.data);
+        } catch (error) {
+          console.error('Failed to fetch user:', error);
+        }
+      }
+    };
+    fetchUser();
   }, []);
 
   const toggleFavorite = (productId: number, e: React.MouseEvent) => {
@@ -71,9 +89,8 @@ const Index = () => {
     <div className="max-w-md mx-auto h-full overflow-y-auto">
       {/* Fixed Header and Search */}
       <div
-        className={`sticky top-0 z-10 transition-all duration-300 ${
-          isScrolled ? "bg-background/95 backdrop-blur-md shadow-sm" : "bg-background"
-        }`}
+        className={`sticky top-0 z-10 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md shadow-sm" : "bg-background"
+          }`}
       >
         <div className="px-4 pt-6 pb-4">
           {/* Header */}
@@ -83,8 +100,10 @@ const Index = () => {
                 <span className="text-primary-foreground text-2xl font-bold">F</span>
               </div>
               <div>
-                <h1 className="text-xl font-bold">Fluxwear</h1>
-                <p className="text-xs text-muted-foreground">Bold Looks. Clean Lines.</p>
+                <h1 className="text-xl font-bold">FluffyLetter</h1>
+                <p className="text-xs text-muted-foreground">
+                  {user ? `欢迎回来，${user.username}` : "发现你的专属风格"}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -149,18 +168,17 @@ const Index = () => {
                     alt={product.name}
                     className="w-full aspect-square object-cover"
                   />
-                <button
-                  className="absolute top-3 right-3 h-10 w-10 rounded-full bg-background flex items-center justify-center shadow-md hover:scale-110 transition-transform"
-                  onClick={(e) => toggleFavorite(product.id, e)}
-                >
-                  <Heart
-                    className={`h-5 w-5 transition-colors ${
-                      favorites.includes(product.id)
-                        ? "fill-[rgb(255,107,107)] text-[rgb(255,107,107)]"
-                        : "text-foreground"
-                    }`}
-                  />
-                </button>
+                  <button
+                    className="absolute top-3 right-3 h-10 w-10 rounded-full bg-background flex items-center justify-center shadow-md hover:scale-110 transition-transform"
+                    onClick={(e) => toggleFavorite(product.id, e)}
+                  >
+                    <Heart
+                      className={`h-5 w-5 transition-colors ${favorites.includes(product.id)
+                          ? "fill-[rgb(255,107,107)] text-[rgb(255,107,107)]"
+                          : "text-foreground"
+                        }`}
+                    />
+                  </button>
                 </div>
                 <div className="pt-3 px-1">
                   <h3 className="font-bold text-base mb-1 tracking-tight">{product.name}</h3>
