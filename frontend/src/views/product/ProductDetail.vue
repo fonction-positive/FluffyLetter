@@ -173,14 +173,14 @@ const addToCart = async () => {
 
 /* Breadcrumb */
 .breadcrumb-container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: var(--spacing-lg) var(--spacing-xl);
 }
 
 /* Detail Container */
 .detail-container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing-xl) var(--spacing-2xl);
   display: grid;
