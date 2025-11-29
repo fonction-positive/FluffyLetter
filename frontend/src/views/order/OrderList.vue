@@ -5,7 +5,6 @@
       <div class="header-content">
         <el-button text @click="$router.back()" class="back-button">
           <el-icon><ArrowLeft /></el-icon>
-          {{ $t('common.back') }}
         </el-button>
         <h1 class="page-title">{{ $t('order.myOrders') }}</h1>
       </div>
@@ -14,14 +13,14 @@
     <!-- Filter Tabs -->
     <div class="tabs-container">
       <div class="tabs">
-        <div 
+        <button 
           v-for="tab in tabs" 
           :key="tab.value"
-          :class="['tab', { active: currentTab === tab.value }]"
+          :class="['tab-btn', { active: currentTab === tab.value }]"
           @click="handleTabChange(tab.value)"
         >
           {{ tab.label }}
-        </div>
+        </button>
       </div>
     </div>
 
@@ -208,39 +207,40 @@ const handleConfirm = async (orderId) => {
 }
 
 .header {
-  background-color: #ffffff;
-  border-bottom: 1px solid var(--color-border);
+  background-color: #fafafa;
+  border-bottom: none;
+  padding: 20px 0;
 }
 
 .header-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: var(--spacing-xl);
+  padding: 0 var(--spacing-xl);
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: 12px;
 }
 
 .back-button {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--color-primary);
+  font-size: 24px;
+  font-weight: 400;
+  color: #000;
+  padding: 0;
+  min-width: auto;
 }
 
 .page-title {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--color-text-primary);
+  color: #000000;
   margin: 0;
+  flex: 1;
 }
 
 .tabs-container {
-  background: #ffffff;
-  border-bottom: 1px solid var(--color-border);
-  position: sticky;
-  top: 0;
-  z-index: 99;
+  background: #fafafa;
+  border-bottom: none;
+  padding: 0 0 20px 0;
 }
 
 .tabs {
@@ -248,26 +248,33 @@ const handleConfirm = async (orderId) => {
   margin: 0 auto;
   padding: 0 var(--spacing-xl);
   display: flex;
-  gap: var(--spacing-xl);
+  gap: 12px;
+  background-color: #f0f0f0;
+  border-radius: 30px;
+  padding: 4px;
 }
 
-.tab {
-  padding: var(--spacing-md) 0;
+.tab-btn {
+  padding: 10px 24px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
-  color: var(--color-text-secondary);
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
+  color: #666;
+  background: transparent;
+  border: none;
+  border-radius: 26px;
+  transition: all 0.3s;
+  white-space: nowrap;
 }
 
-.tab:hover {
-  color: var(--color-text-primary);
+.tab-btn:hover {
+  color: #000;
 }
 
-.tab.active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
+.tab-btn.active {
+  color: #000;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .orders-container {
