@@ -61,6 +61,21 @@ const routes = [
         component: () => import('../views/user/UserProfile.vue'),
     },
     {
+        path: '/user/profile/basic',
+        name: 'BasicInfo',
+        component: () => import('../views/user/BasicInfo.vue'),
+    },
+    {
+        path: '/user/profile/address',
+        name: 'AddressManagement',
+        component: () => import('../views/user/AddressManagement.vue'),
+    },
+    {
+        path: '/user/profile/security',
+        name: 'SecuritySettings',
+        component: () => import('../views/user/SecuritySettings.vue'),
+    },
+    {
         path: '/manage/dashboard',
         name: 'AdminDashboard',
         component: () => import('../views/admin/AdminDashboard.vue'),
