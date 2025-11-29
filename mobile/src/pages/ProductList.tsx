@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import Layout from "@/components/Layout";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import api from "@/lib/api";
 
 interface Product {
   id: number;
@@ -66,12 +67,8 @@ const ProductList = () => {
           url += (url.includes('?') ? '&' : '?') + `ordering=${ordering}`;
         }
 
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Failed to fetch products');
-        }
-        const data = await response.json();
-        setProducts(data);
+        const response = await api.get(url);
+        setProducts(response.data);
       } catch (err) {
         console.error("Error fetching products:", err);
         setError("Failed to load products. Please try again.");
