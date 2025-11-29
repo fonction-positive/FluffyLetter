@@ -218,7 +218,7 @@ const handleConfirm = async (orderId) => {
 .page-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: var(--spacing-xl);
+  padding: 0 var(--spacing-xl);
 }
 
 .page-header {
