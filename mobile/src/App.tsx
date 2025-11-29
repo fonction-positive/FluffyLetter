@@ -20,6 +20,8 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import About from "./pages/About";
 import Notifications from "./pages/Notifications";
 import ProductList from "./pages/ProductList";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +47,8 @@ const MainPages = () => {
         <Route path="/about" element={<About />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/products" element={<ProductList />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     );
