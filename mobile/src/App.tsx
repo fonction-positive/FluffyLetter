@@ -26,10 +26,10 @@ const queryClient = new QueryClient();
 
 const MainPages = () => {
   const location = useLocation();
-  
+
   // Check if we're on a main page or a detail page
   const isMainPage = ['/', '/favorites', '/cart', '/profile'].includes(location.pathname);
-  
+
   if (!isMainPage) {
     return (
       <Routes>
@@ -49,7 +49,7 @@ const MainPages = () => {
       </Routes>
     );
   }
-  
+
   return (
     <MainLayout>
       <Index />
@@ -65,7 +65,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename="/mobile">
         <MainPages />
       </BrowserRouter>
     </TooltipProvider>
