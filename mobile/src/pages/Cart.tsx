@@ -2,64 +2,100 @@ import { useState, useEffect } from "react";
 import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import api from "@/lib/api";
+
+interface ProductImage {
+  id: number;
+  image: string;
+  is_main: boolean;
+}
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  main_image?: ProductImage;
+  color?: string;
+  size?: string;
+}
 
 interface CartItem {
   id: number;
-  name: string;
-  color: string;
-  size: string;
-  price: number;
+  product: number;
+  product_detail: Product;
   quantity: number;
-  image: string;
+  subtotal: string;
+}
+
+interface CartData {
+  id: number;
+  items: CartItem[];
+  total_count: number;
+  total_price: string;
 }
 
 const Cart = () => {
-  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: "BLACK CROP TOP",
-      color: "Grey",
-      size: "M",
-      price: 45,
-      quantity: 1,
-      image: "https://images.unsplash.com/photo-1594633313593-bab3825d0caf?w=400&h=400&fit=crop",
-    },
-    {
-      id: 2,
-      name: "LUXE SWEATER",
-      color: "Grey",
-      size: "L",
-      price: 85,
-      quantity: 2,
-      image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=400&fit=crop",
-    },
-  ]);
+  const [cart, setCart] = useState<CartData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
+  // Check login status and fetch cart
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     setIsLoggedIn(!!token);
+
+    if (token) {
+      fetchCart();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
-  const updateQuantity = (id: number, delta: number) => {
-    setCartItems(items =>
-      items.map(item =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item
-      )
-    );
+  const fetchCart = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await api.get('cart/');
+      setCart(response.data);
+    } catch (err: any) {
+      console.error('Failed to fetch cart:', err);
+      setError("加载购物车失败");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const removeItem = (id: number) => {
-    setCartItems(items => items.filter(item => item.id !== id));
+  const updateQuantity = async (itemId: number, newQuantity: number) => {
+    try {
+      if (newQuantity <= 0) {
+        await removeItem(itemId);
+        return;
+      }
+
+      await api.put(`cart/update_item/${itemId}/`, { quantity: newQuantity });
+      await fetchCart(); // Refresh cart
+    } catch (err: any) {
+      console.error('Failed to update quantity:', err);
+      const errorMsg = err.response?.data?.error || "更新失败";
+      setError(errorMsg);
+    }
   };
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const removeItem = async (itemId: number) => {
+    try {
+      await api.delete(`cart/remove_item/${itemId}/`);
+      await fetchCart(); // Refresh cart
+    } catch (err: any) {
+      console.error('Failed to remove item:', err);
+      setError("删除失败");
+    }
+  };
+
   const shipping = 10;
-  const total = subtotal + shipping;
+  const subtotal = parseFloat(cart?.total_price || '0');
+  const total = subtotal + (cart && cart.items.length > 0 ? shipping : 0);
 
   // Guest state - not logged in
   if (!isLoggedIn) {
@@ -99,6 +135,45 @@ const Cart = () => {
     );
   }
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="max-w-md mx-auto px-4 py-6 h-full overflow-y-auto">
+        <div className="flex items-center gap-4 mb-8">
+          <Link to="/">
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <h1 className="text-3xl font-bold">Shopping Cart</h1>
+        </div>
+        <div className="flex justify-center items-center py-16">
+          <p className="text-muted-foreground">加载中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error && !cart) {
+    return (
+      <div className="max-w-md mx-auto px-4 py-6 h-full overflow-y-auto">
+        <div className="flex items-center gap-4 mb-8">
+          <Link to="/">
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <h1 className="text-3xl font-bold">Shopping Cart</h1>
+        </div>
+        <div className="flex flex-col items-center justify-center py-16">
+          <p className="text-destructive mb-4">{error}</p>
+          <Button onClick={fetchCart}>重试</Button>
+        </div>
+      </div>
+    );
+  }
+
   // Logged in state - show cart
   return (
     <div className="max-w-md mx-auto px-4 py-6 h-full overflow-y-auto">
@@ -112,7 +187,7 @@ const Cart = () => {
         <h1 className="text-3xl font-bold">Shopping Cart</h1>
       </div>
 
-      {cartItems.length === 0 ? (
+      {!cart || cart.items.length === 0 ? (
         /* Empty Cart - Logged in */
         <div className="flex flex-col items-center justify-center py-16 px-6">
           <div className="w-32 h-32 bg-muted rounded-full flex items-center justify-center mb-6">
@@ -130,22 +205,31 @@ const Cart = () => {
         </div>
       ) : (
         <>
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
+              {error}
+            </div>
+          )}
+
           {/* Cart Items */}
           <div className="space-y-4 mb-6">
-            {cartItems.map((item) => (
+            {cart.items.map((item) => (
               <Card key={item.id} className="p-4 rounded-2xl">
                 <div className="flex gap-4">
                   <img
-                    src={item.image}
-                    alt={item.name}
+                    src={item.product_detail.main_image?.image || "https://images.unsplash.com/photo-1594633313593-bab3825d0caf?w=400&h=400&fit=crop"}
+                    alt={item.product_detail.name}
                     className="w-24 h-24 object-cover rounded-xl"
                   />
                   <div className="flex-1">
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <h3 className="font-bold text-sm">{item.name}</h3>
+                        <h3 className="font-bold text-sm">{item.product_detail.name}</h3>
                         <p className="text-xs text-muted-foreground">
-                          Color: {item.color} • Size: {item.size}
+                          {item.product_detail.color && `Color: ${item.product_detail.color}`}
+                          {item.product_detail.color && item.product_detail.size && " • "}
+                          {item.product_detail.size && `Size: ${item.product_detail.size}`}
                         </p>
                       </div>
                       <Button
@@ -158,13 +242,13 @@ const Cart = () => {
                       </Button>
                     </div>
                     <div className="flex justify-between items-center">
-                      <p className="font-bold text-lg">${item.price}</p>
+                      <p className="font-bold text-lg">¥{item.product_detail.price}</p>
                       <div className="flex items-center gap-2 bg-muted rounded-full px-2 py-1">
                         <Button
                           variant="ghost"
                           size="icon"
                           className="h-7 w-7 rounded-full"
-                          onClick={() => updateQuantity(item.id, -1)}
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         >
                           <Minus className="h-3 w-3" />
                         </Button>
@@ -175,7 +259,7 @@ const Cart = () => {
                           variant="ghost"
                           size="icon"
                           className="h-7 w-7 rounded-full"
-                          onClick={() => updateQuantity(item.id, 1)}
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         >
                           <Plus className="h-3 w-3" />
                         </Button>
@@ -193,16 +277,16 @@ const Cart = () => {
             <div className="space-y-2 mb-4">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-semibold">${subtotal}</span>
+                <span className="font-semibold">¥{subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Shipping</span>
-                <span className="font-semibold">${shipping}</span>
+                <span className="font-semibold">¥{shipping}</span>
               </div>
               <div className="border-t border-border pt-2 mt-2">
                 <div className="flex justify-between">
                   <span className="font-bold">Total</span>
-                  <span className="font-bold text-xl">${total}</span>
+                  <span className="font-bold text-xl">¥{total.toFixed(2)}</span>
                 </div>
               </div>
             </div>
