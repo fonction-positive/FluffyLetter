@@ -24,6 +24,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import VerifyEmail from "./pages/VerifyEmail";
 import NotFound from "./pages/NotFound";
+import EditProfile from "./pages/EditProfile";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const MainPages = () => {
       <Routes>
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/orders" element={<Orders />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/address-management" element={<AddressManagement />} />
         <Route path="/password-security" element={<PasswordSecurity />} />

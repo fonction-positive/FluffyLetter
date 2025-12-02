@@ -118,7 +118,7 @@ const Profile = () => {
             <div className="flex-1">
               <h2 className="text-xl font-bold">{user.username}</h2>
               <p className="text-sm text-muted-foreground">{user.email}</p>
-              <Link to="/settings">
+              <Link to="/edit-profile">
                 <Button
                   variant="outline"
                   size="sm"
