@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Cart from "./pages/Cart";
 import Profile from "./pages/Profile";
@@ -28,53 +28,38 @@ import EditProfile from "./pages/EditProfile";
 
 const queryClient = new QueryClient();
 
-const MainPages = () => {
-  const location = useLocation();
-
-  // Check if we're on a main page or a detail page
-  const isMainPage = ['/', '/favorites', '/cart', '/profile'].includes(location.pathname);
-
-  if (!isMainPage) {
-    return (
-      <Routes>
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/edit-profile" element={<EditProfile />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/address-management" element={<AddressManagement />} />
-        <Route path="/password-security" element={<PasswordSecurity />} />
-        <Route path="/notification-settings" element={<NotificationSettings />} />
-        <Route path="/language-settings" element={<LanguageSettings />} />
-        <Route path="/help-center" element={<HelpCenter />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/products" element={<ProductList />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    );
-  }
-
-  return (
-    <MainLayout>
-      <Index />
-      <Favorites />
-      <Cart />
-      <Profile />
-    </MainLayout>
-  );
-};
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter basename="/mobile">
-        <MainPages />
+        <Routes>
+          {/* Main pages with bottom navigation */}
+          <Route path="/" element={<MainLayout><Index /></MainLayout>} />
+          <Route path="/favorites" element={<MainLayout><Favorites /></MainLayout>} />
+          <Route path="/cart" element={<MainLayout><Cart /></MainLayout>} />
+          <Route path="/profile" element={<MainLayout><Profile /></MainLayout>} />
+          
+          {/* Detail pages without bottom navigation */}
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/address-management" element={<AddressManagement />} />
+          <Route path="/password-security" element={<PasswordSecurity />} />
+          <Route path="/notification-settings" element={<NotificationSettings />} />
+          <Route path="/language-settings" element={<LanguageSettings />} />
+          <Route path="/help-center" element={<HelpCenter />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/products" element={<ProductList />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

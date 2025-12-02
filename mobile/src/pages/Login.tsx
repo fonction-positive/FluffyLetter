@@ -204,7 +204,7 @@ const Login = () => {
                 <div className="relative">
                     {/* Password Login Form */}
                     {loginMode === "password" && (
-                        <form onSubmit={handlePasswordLogin} className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-300">
+                        <form onSubmit={handlePasswordLogin} className="space-y-4">
                             <div className="relative">
                                 <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#86868b]" />
                                 <Input
@@ -289,7 +289,7 @@ const Login = () => {
 
                     {/* Email Login Form */}
                     {loginMode === "email" && (
-                        <form onSubmit={handleEmailLogin} className="space-y-4 animate-in fade-in slide-in-from-left-2 duration-300">
+                        <form onSubmit={handleEmailLogin} className="space-y-4">
                             <div className="relative">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#86868b]" />
                                 <Input
