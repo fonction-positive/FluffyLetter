@@ -87,7 +87,7 @@ const Profile = () => {
   ];
 
   const handleMenuClick = (path: string) => {
-    navigate(path);
+    navigate(path, { state: { from: '/profile' } });
   };
 
   if (loading) {

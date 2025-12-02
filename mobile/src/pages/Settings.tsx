@@ -2,10 +2,11 @@ import { ChevronRight, MapPin, Bell, Lock, Globe, HelpCircle, FileText, Info } f
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Settings = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const settingsSections = [
     {
@@ -40,7 +41,14 @@ const Settings = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              const from = (location.state as any)?.from;
+              if (from === '/profile') {
+                navigate('/profile');
+              } else {
+                navigate(-1);
+              }
+            }}
             className="rounded-full"
           >
             <ChevronRight className="h-5 w-5 rotate-180" />
@@ -58,8 +66,12 @@ const Settings = () => {
               <div className="space-y-2">
                 {section.items.map((item) => {
                   const Icon = item.icon;
-                  const content = (
-                    <Card className="p-4 my-3 rounded-2xl cursor-pointer hover:bg-muted/50 transition-colors">
+                  return (
+                    <Card 
+                      key={item.label}
+                      className="p-4 my-3 rounded-2xl cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => item.path && navigate(item.path, { state: { from: location.pathname } })}
+                    >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3 flex-1">
                           <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
@@ -75,14 +87,6 @@ const Settings = () => {
                         <ChevronRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                       </div>
                     </Card>
-                  );
-
-                  return item.path ? (
-                    <Link key={item.label} to={item.path}>
-                      {content}
-                    </Link>
-                  ) : (
-                    <div key={item.label}>{content}</div>
                   );
                 })}
               </div>

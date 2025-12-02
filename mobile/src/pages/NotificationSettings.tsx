@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import Layout from "@/components/Layout";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface NotificationSetting {
   id: string;
@@ -16,6 +16,7 @@ interface NotificationSetting {
 
 const NotificationSettings = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [settings, setSettings] = useState<NotificationSetting[]>([
     {
@@ -64,7 +65,14 @@ const NotificationSettings = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              const from = (location.state as any)?.from;
+              if (from) {
+                navigate(from);
+              } else {
+                navigate(-1);
+              }
+            }}
             className="rounded-full"
           >
             <ChevronRight className="h-5 w-5 rotate-180" />

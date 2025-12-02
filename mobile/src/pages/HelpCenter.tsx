@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Layout from "@/components/Layout";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface FAQ {
   question: string;
@@ -15,6 +15,7 @@ interface FAQ {
 
 const HelpCenter = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
 
   const faqs: FAQ[] = [
@@ -77,7 +78,14 @@ const HelpCenter = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              const from = (location.state as any)?.from;
+              if (from) {
+                navigate(from);
+              } else {
+                navigate(-1);
+              }
+            }}
             className="rounded-full"
           >
             <ChevronRight className="h-5 w-5 rotate-180" />

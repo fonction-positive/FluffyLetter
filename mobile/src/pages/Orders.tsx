@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Package, Truck, CheckCircle, Clock, X } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import api from "@/lib/api";
 
 interface OrderItem {
@@ -34,6 +34,7 @@ interface Order {
 
 const Orders = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedTab, setSelectedTab] = useState("all");
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
@@ -91,7 +92,14 @@ const Orders = () => {
             variant="ghost"
             size="icon"
             className="rounded-full"
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              const from = (location.state as any)?.from;
+              if (from === '/profile') {
+                navigate('/profile');
+              } else {
+                navigate(-1);
+              }
+            }}
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>

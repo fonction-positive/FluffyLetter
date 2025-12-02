@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import Layout from "@/components/Layout";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -29,6 +29,7 @@ type PasswordFormData = z.infer<typeof passwordSchema>;
 
 const PasswordSecurity = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
@@ -73,7 +74,14 @@ const PasswordSecurity = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              const from = (location.state as any)?.from;
+              if (from) {
+                navigate(from);
+              } else {
+                navigate(-1);
+              }
+            }}
             className="rounded-full"
           >
             <ChevronRight className="h-5 w-5 rotate-180" />

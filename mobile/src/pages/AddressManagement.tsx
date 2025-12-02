@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Layout from "@/components/Layout";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import api from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
@@ -21,6 +21,7 @@ interface Address {
 
 const AddressManagement = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,7 +84,14 @@ const AddressManagement = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate(-1)}
+              onClick={() => {
+                const from = (location.state as any)?.from;
+                if (from) {
+                  navigate(from);
+                } else {
+                  navigate(-1);
+                }
+              }}
               className="rounded-full"
             >
               <ChevronRight className="h-5 w-5 rotate-180" />

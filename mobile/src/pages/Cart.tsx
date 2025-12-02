@@ -103,15 +103,7 @@ const Cart = () => {
     return (
       <div className="max-w-md mx-auto px-4 py-6 h-full overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full"
-            onClick={() => navigate(-1)}
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
+        <div className="mb-8">
           <h1 className="text-3xl font-bold">Shopping Cart</h1>
         </div>
 
@@ -143,15 +135,7 @@ const Cart = () => {
   if (loading) {
     return (
       <div className="max-w-md mx-auto px-4 py-6 h-full overflow-y-auto">
-        <div className="flex items-center gap-4 mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full"
-            onClick={() => navigate(-1)}
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
+        <div className="mb-8">
           <h1 className="text-3xl font-bold">Shopping Cart</h1>
         </div>
         <div className="flex justify-center items-center py-16">
@@ -165,15 +149,7 @@ const Cart = () => {
   if (error && !cart) {
     return (
       <div className="max-w-md mx-auto px-4 py-6 h-full overflow-y-auto">
-        <div className="flex items-center gap-4 mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full"
-            onClick={() => navigate(-1)}
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
+        <div className="mb-8">
           <h1 className="text-3xl font-bold">Shopping Cart</h1>
         </div>
         <div className="flex flex-col items-center justify-center py-16">
@@ -188,15 +164,7 @@ const Cart = () => {
   return (
     <div className="max-w-md mx-auto px-4 py-6 h-full overflow-y-auto">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
+      <div className="mb-8">
         <h1 className="text-3xl font-bold">Shopping Cart</h1>
       </div>
 
