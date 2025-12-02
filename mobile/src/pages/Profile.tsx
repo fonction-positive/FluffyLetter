@@ -87,6 +87,10 @@ const Profile = () => {
     { icon: Settings, label: "Settings", path: "/settings" },
   ];
 
+  const handleMenuClick = (path: string) => {
+    navigate(path);
+  };
+
   if (loading) {
     return (
       <div className="max-w-md mx-auto px-4 py-6 h-full flex items-center justify-center">
@@ -176,10 +180,11 @@ const Profile = () => {
       <div className="space-y-6 mb-6">
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const content = (
+          return (
             <Card
               key={item.label}
               className="p-4 my-3 rounded-2xl cursor-pointer hover:bg-muted/50 transition-colors"
+              onClick={() => handleMenuClick(item.path)}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -198,14 +203,6 @@ const Profile = () => {
                 </div>
               </div>
             </Card>
-          );
-
-          return item.path ? (
-            <Link key={item.label} to={item.path}>
-              {content}
-            </Link>
-          ) : (
-            content
           );
         })}
       </div>

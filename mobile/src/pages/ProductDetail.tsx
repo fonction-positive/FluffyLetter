@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import api from "@/lib/api";
 
@@ -41,6 +41,7 @@ interface Product {
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
   const [product, setProduct] = useState<Product | null>(null);
@@ -173,11 +174,12 @@ const ProductDetail = () => {
       {/* Fixed Floating Back and Favorite Buttons */}
       <div className="fixed top-4 left-0 right-0 z-20">
         <div className="max-w-md mx-auto px-4 flex items-center justify-between">
-          <Link to="/">
-            <button className="h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-lg hover:bg-background transition-all">
-              <ArrowLeft className="h-5 w-5" />
-            </button>
-          </Link>
+          <button
+            onClick={() => navigate(-1)}
+            className="h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-lg hover:bg-background transition-all"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </button>
           <button
             onClick={toggleFavorite}
             className="h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-lg hover:bg-background transition-all"

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "@/lib/api";
 
 interface ProductImage {
@@ -36,6 +36,7 @@ interface CartData {
 }
 
 const Cart = () => {
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [cart, setCart] = useState<CartData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -103,11 +104,14 @@ const Cart = () => {
       <div className="max-w-md mx-auto px-4 py-6 h-full overflow-y-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
-          <Link to="/">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
           <h1 className="text-3xl font-bold">Shopping Cart</h1>
         </div>
 
@@ -140,11 +144,14 @@ const Cart = () => {
     return (
       <div className="max-w-md mx-auto px-4 py-6 h-full overflow-y-auto">
         <div className="flex items-center gap-4 mb-8">
-          <Link to="/">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
           <h1 className="text-3xl font-bold">Shopping Cart</h1>
         </div>
         <div className="flex justify-center items-center py-16">
@@ -159,11 +166,14 @@ const Cart = () => {
     return (
       <div className="max-w-md mx-auto px-4 py-6 h-full overflow-y-auto">
         <div className="flex items-center gap-4 mb-8">
-          <Link to="/">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
           <h1 className="text-3xl font-bold">Shopping Cart</h1>
         </div>
         <div className="flex flex-col items-center justify-center py-16">
@@ -179,11 +189,14 @@ const Cart = () => {
     <div className="max-w-md mx-auto px-4 py-6 h-full overflow-y-auto">
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
-        <Link to="/">
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
         <h1 className="text-3xl font-bold">Shopping Cart</h1>
       </div>
 
