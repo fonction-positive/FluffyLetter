@@ -70,7 +70,8 @@ const Login = () => {
             const { access, refresh } = response.data;
             localStorage.setItem("access_token", access);
             localStorage.setItem("refresh_token", refresh);
-            navigate("/");
+            // Force a full page reload to ensure proper navigation with basename
+            window.location.href = '/mobile/';
         } catch (err: any) {
             let errorMsg = "登录失败";
             if (err.response?.data?.detail) {
@@ -167,7 +168,8 @@ const Login = () => {
             const { access, refresh } = response.data;
             localStorage.setItem("access_token", access);
             localStorage.setItem("refresh_token", refresh);
-            navigate("/");
+            // Force a full page reload to ensure proper navigation with basename
+            window.location.href = '/mobile/';
         } catch (err: any) {
             let errorMsg = "登录失败";
             if (err.response?.data?.detail) {
