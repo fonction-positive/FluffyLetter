@@ -6,13 +6,13 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "@/lib/api";
 
 interface ProductImage {
-  id: number;
+  id: string;
   image: string;
   is_main: boolean;
 }
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
   price: number;
   main_image?: ProductImage;
@@ -68,7 +68,7 @@ const Cart = () => {
     }
   };
 
-  const updateQuantity = async (itemId: number, newQuantity: number) => {
+  const updateQuantity = async (itemId: string, newQuantity: number) => {
     try {
       if (newQuantity <= 0) {
         await removeItem(itemId);
@@ -84,7 +84,7 @@ const Cart = () => {
     }
   };
 
-  const removeItem = async (itemId: number) => {
+  const removeItem = async (itemId: string) => {
     try {
       await api.delete(`cart/remove_item/${itemId}/`);
       await fetchCart(); // Refresh cart

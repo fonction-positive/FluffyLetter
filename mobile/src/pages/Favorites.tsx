@@ -7,13 +7,13 @@ import api from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
 interface ProductImage {
-  id: number;
+  id: string;
   image: string;
   is_main: boolean;
 }
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
   description?: string;
   price: number;
@@ -24,8 +24,8 @@ interface Product {
 }
 
 interface Favorite {
-  id: number;
-  product: number;
+  id: string;
+  product: string;
   product_detail: Product;
   created_at: string;
 }
@@ -46,6 +46,30 @@ const Favorites = () => {
     } else {
       setLoading(false);
     }
+
+    // 监听收藏状态变化事件
+    const handleFavoritesChanged = () => {
+      if (token) {
+        fetchFavorites();
+      }
+    };
+
+    // 当页面重新获得焦点时重新加载
+    const handleVisibilityChange = () => {
+      if (!document.hidden && token) {
+        fetchFavorites();
+      }
+    };
+
+    window.addEventListener('favoritesChanged', handleFavoritesChanged as EventListener);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFavoritesChanged);
+
+    return () => {
+      window.removeEventListener('favoritesChanged', handleFavoritesChanged as EventListener);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFavoritesChanged);
+    };
   }, []);
 
   const fetchFavorites = async () => {
@@ -66,10 +90,16 @@ const Favorites = () => {
   };
 
   // Remove from favorites
-  const removeFavorite = async (productId: number) => {
+  const removeFavorite = async (productId: string) => {
     try {
       await api.delete(`favorites/remove/${productId}/`);
       setFavorites(prev => prev.filter(fav => fav.product !== productId));
+      
+      // 触发自定义事件通知其他页面更新收藏状态
+      window.dispatchEvent(new CustomEvent('favoritesChanged', { 
+        detail: { productId, isFavorited: false }
+      }));
+      
       toast({
         title: "已取消收藏",
         description: "已从收藏夹中移除",

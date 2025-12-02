@@ -9,7 +9,7 @@ import api from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
 interface Address {
-  id: number;
+  id: string;
   recipient_name: string;
   phone: string;
   province: string;
@@ -47,7 +47,7 @@ const AddressManagement = () => {
     }
   };
 
-  const handleSetDefault = async (addressId: number) => {
+  const handleSetDefault = async (addressId: string) => {
     try {
       await api.put(`addresses/${addressId}/`, { is_default: true });
       await fetchAddresses();

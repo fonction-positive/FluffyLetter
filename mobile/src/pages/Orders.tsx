@@ -19,7 +19,7 @@ interface OrderItem {
 }
 
 interface Order {
-  id: number;
+  id: string;
   order_no: string;
   total_amount: string;
   status: "pending" | "paid" | "shipped" | "completed" | "cancelled";

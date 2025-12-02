@@ -1,9 +1,11 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+import uuid
 
 User = get_user_model()
 
 class Category(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=50)
     slug = models.SlugField(unique=True)
     icon = models.ImageField(upload_to='categories/', null=True, blank=True)
@@ -15,6 +17,7 @@ class Category(models.Model):
         return self.name
 
 class Product(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     category = models.ForeignKey(Category, related_name='products', on_delete=models.PROTECT)
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
@@ -54,6 +57,7 @@ class Product(models.Model):
         return self.discount_percentage > 0 or (self.original_price and self.original_price > self.price)
 
 class ProductImage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='products/')
     is_main = models.BooleanField(default=False)
@@ -63,6 +67,7 @@ class ProductImage(models.Model):
 
 class Favorite(models.Model):
     """用户收藏的商品"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, related_name='favorites', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='favorited_by', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)

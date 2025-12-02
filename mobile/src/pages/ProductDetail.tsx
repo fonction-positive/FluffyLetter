@@ -9,13 +9,13 @@ import { toast } from "@/hooks/use-toast";
 import api from "@/lib/api";
 
 interface ProductImage {
-  id: number;
+  id: string;
   image: string;
   is_main: boolean;
 }
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
   description?: string;
   price: number;
@@ -24,7 +24,7 @@ interface Product {
   has_discount?: boolean;
   stock: number;
   is_hot_sale?: boolean;
-  category?: number;
+  category?: string;
   category_name?: string;
   rating?: number;
   reviews?: number;
@@ -129,6 +129,12 @@ const ProductDetail = () => {
       });
       
       setIsFavorite(response.data.is_favorited);
+      
+      // 触发自定义事件通知其他页面更新收藏状态
+      window.dispatchEvent(new CustomEvent('favoritesChanged', { 
+        detail: { productId: product.id, isFavorited: response.data.is_favorited }
+      }));
+      
       toast({
         title: response.data.is_favorited ? "已添加到收藏夹" : "已取消收藏",
         description: response.data.message,

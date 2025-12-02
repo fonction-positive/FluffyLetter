@@ -10,7 +10,7 @@ import { toast } from "@/hooks/use-toast";
 import api from "@/lib/api";
 
 interface UserData {
-  id: number;
+  id: string;
   username: string;
   email: string;
   avatar?: string;

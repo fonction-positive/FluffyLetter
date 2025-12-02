@@ -8,13 +8,13 @@ import { Link } from "react-router-dom";
 import api from "@/lib/api";
 
 interface ProductImage {
-  id: number;
+  id: string;
   image: string;
   is_main: boolean;
 }
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
   description?: string;
   price: number;
@@ -23,7 +23,7 @@ interface Product {
   has_discount?: boolean;
   stock: number;
   is_hot_sale?: boolean;
-  category?: number;
+  category?: string;
   rating?: number;
   reviews?: number;
   color?: string;
@@ -39,7 +39,7 @@ interface Product {
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [isScrolled, setIsScrolled] = useState(false);
-  const [favorites, setFavorites] = useState<number[]>([]);
+  const [favorites, setFavorites] = useState<string[]>([]);
   const [user, setUser] = useState<{ username: string } | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
@@ -111,16 +111,28 @@ const Index = () => {
       }
     };
 
+    // 监听收藏状态变化事件
+    const handleFavoritesChanged = (e: any) => {
+      const { productId, isFavorited } = e.detail;
+      if (isFavorited) {
+        setFavorites(prev => [...prev, productId]);
+      } else {
+        setFavorites(prev => prev.filter(id => id !== productId));
+      }
+    };
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('focus', fetchFavorites);
+    window.addEventListener('favoritesChanged', handleFavoritesChanged as EventListener);
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('focus', fetchFavorites);
+      window.removeEventListener('favoritesChanged', handleFavoritesChanged as EventListener);
     };
   }, []);
 
-  const toggleFavorite = async (productId: number, e: React.MouseEvent) => {
+  const toggleFavorite = async (productId: string, e: React.MouseEvent) => {
     e.preventDefault();
     
     const token = localStorage.getItem('access_token');
@@ -145,6 +157,11 @@ const Index = () => {
       } else {
         setFavorites(prev => prev.filter(id => id !== productId));
       }
+      
+      // 触发自定义事件通知其他页面更新收藏状态
+      window.dispatchEvent(new CustomEvent('favoritesChanged', { 
+        detail: { productId, isFavorited: response.data.is_favorited }
+      }));
     } catch (error) {
       console.error('Failed to toggle favorite:', error);
     }

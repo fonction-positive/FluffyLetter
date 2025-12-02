@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "@/lib/api";
 
 interface UserData {
-  id: number;
+  id: string;
   username: string;
   email: string;
   avatar?: string;
