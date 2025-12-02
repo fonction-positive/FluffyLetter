@@ -100,7 +100,24 @@ const Index = () => {
         console.error('Failed to fetch favorites:', error);
       }
     };
+    
+    // 初始加载
     fetchFavorites();
+
+    // 当页面重新获得焦点时重新加载（从详情页返回时）
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchFavorites();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', fetchFavorites);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', fetchFavorites);
+    };
   }, []);
 
   const toggleFavorite = async (productId: number, e: React.MouseEvent) => {
